@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.labb2.ui.theme.LabB2Theme
+import com.example.labb2.ui.theme.WeatherScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,10 +21,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             LabB2Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    WeatherScreen(Modifier.padding(innerPadding))
+                //Greeting(
+                    //    name = "Android",
+                    //    modifier = Modifier.padding(innerPadding)
+                    //)
                 }
             }
         }
