@@ -1,0 +1,21 @@
+package com.example.labb2.model.secondversion.databasemymanager.interfaces
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Query
+import androidx.room.Upsert
+import com.example.labb2.model.secondversion.databasemymanager.model.Weather
+
+
+@Dao
+interface WeatherDao {
+
+    @Upsert
+    suspend fun upsertWeather(weather: Weather)
+
+    @Delete
+    suspend fun deleteWeather(weather: Weather)
+
+    @Query("SELECT * FROM weather")
+    fun getWeathers(): List<Weather>
+}

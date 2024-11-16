@@ -1,6 +1,8 @@
-package com.example.labb2.ui.theme
+package com.example.labb2.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +42,8 @@ data class WeatherInfo(val date:String, val time:String ,val weatherIcon:String,
 
 @Composable
 fun WeatherScreen(padding: Modifier) {
+
+
     //val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val nestedScrollInterop = rememberNestedScrollInteropConnection()
     var label1 by remember { mutableStateOf("") }
@@ -52,7 +58,20 @@ fun WeatherScreen(padding: Modifier) {
         WeatherInfo("2018-06-13", "18:00", "w1", "16.5 °C")
     )*/
 
-    val weatherInfos:List<WeatherInfo> = listOf()
+    val weatherInfos = listOf(
+        WeatherInfo("2018-06-13", "18:00", "w1", "16.5 °C")
+    )
+
+    val config = Configuration()
+
+    if(config.orientation == Configuration.ORIENTATION_PORTRAIT){
+        WeatherScreenPortrait()
+    }
+
+    else if(config.orientation == Configuration.ORIENTATION_LANDSCAPE){
+        WeatherScreenLandScape()
+    }
+
 
     Scaffold(
     ) {
@@ -139,7 +158,8 @@ fun WeatherScreen(padding: Modifier) {
                         item {
                             TextField(value = label1,
                                 onValueChange = {label1 = it},
-                                label = {Text("Latitude")}
+                                label = {Text("Latitude")},
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                                 )
                             Spacer(Modifier.padding(5.dp))
                         }
@@ -147,7 +167,8 @@ fun WeatherScreen(padding: Modifier) {
                         item {
                             TextField(value = label2,
                                 onValueChange = {label2 = it},
-                                label = {Text("Longitude")}
+                                label = {Text("Longitude")},
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                             Spacer(Modifier.padding(5.dp))
                         }

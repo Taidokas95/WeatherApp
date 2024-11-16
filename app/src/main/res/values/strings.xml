@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LabB2</string>
+    <string name="test_uri">https://maceo.sth.kth.se/weather/forecast?lonLat=lon/14.333/lat/60.383</string>
+    <string name="actual_uri">https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/16/lat/58/data.json</string>
 </resources>
