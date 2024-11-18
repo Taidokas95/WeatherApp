@@ -38,8 +38,6 @@ import com.google.gson.GsonBuilder
 
 // SQLite
 
-
-
 class Test (private val application: Application) {
 
 

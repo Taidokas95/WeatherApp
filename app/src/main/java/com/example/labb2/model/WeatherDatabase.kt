@@ -1,11 +1,9 @@
-package com.example.labb2.model.secondversion.databasemymanager.model
+package com.example.labb2.model
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.labb2.model.secondversion.databasemymanager.interfaces.WeatherDao
-import com.example.labb2.model.secondversion.databasemymanager.model.Weather
-import com.example.labb2.model.secondversion.databasemymanager.model.WeathersConverter
+import com.example.labb2.model.interfaces.WeatherDao
 
 //import com.example.labb2.model.secondversion.databasemymanager.interfaces.WeatherDao
 

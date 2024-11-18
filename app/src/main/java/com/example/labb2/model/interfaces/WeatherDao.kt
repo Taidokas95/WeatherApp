@@ -1,10 +1,10 @@
-package com.example.labb2.model.secondversion.databasemymanager.interfaces
+package com.example.labb2.model.interfaces
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.labb2.model.secondversion.databasemymanager.model.Weather
+import com.example.labb2.model.Weather
 
 
 @Dao

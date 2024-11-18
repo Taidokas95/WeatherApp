@@ -1,4 +1,4 @@
-package com.example.labb2.model.secondversion.databasemymanager.interfaces
+package com.example.labb2.model.interfaces
 
 
 interface WeatherEvent {

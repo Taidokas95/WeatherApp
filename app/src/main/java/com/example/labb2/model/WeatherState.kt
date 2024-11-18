@@ -1,4 +1,4 @@
-package com.example.labb2.model.secondversion
+package com.example.labb2.model
 
 data class WeatherState(
     val weatherDate:String,
