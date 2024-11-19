@@ -55,7 +55,7 @@ class WeatherViewModel(private val dao: WeatherDao) : WeatherViewModelInterface,
                 val coordinates = "x = 1, y = 2"
                 val approvedTime = "2024-06-04 20.00"
 
-                val weathersState = WeathersState(
+                /*val weathersState = WeathersState(
                     weathers = listOf(WeatherState("2024-06-04 0100", "w31", 55.3f)),
                     approvedTime = approvedTime,
                     coordinates = coordinates
@@ -69,7 +69,7 @@ class WeatherViewModel(private val dao: WeatherDao) : WeatherViewModelInterface,
                             coordinates = weathersState.coordinates
                         )
                     )
-                }
+                }*/
             }
 
             is WeatherEvent.LoadWeather -> {

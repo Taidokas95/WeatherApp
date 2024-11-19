@@ -4,26 +4,28 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 
 @Entity
 data class Weather(
     @PrimaryKey(autoGenerate = true)
     val id:Int = 0,
-    val weathers: String,
+    @TypeConverters(WeathersConverter::class) val weathers: String,
     val approvedTime:String,
-    val coordinates:String
+    val latitude:Float,
+    val longitude:Float
 )
 
 class WeathersConverter{
 
 	@TypeConverter
-    fun WeathersToString(weathersState: WeathersState):String{
+    fun weathersToString(weathersState: WeathersState):String{
         val gson = Gson()
         return gson.toJson(weathersState, WeathersState::class.java)
     }
 
 	@TypeConverter
-    fun StringToWeather(weathersState: String): WeathersState {
+    fun stringToWeather(weathersState: String): WeathersState {
         val gson = Gson()
         return gson.fromJson(weathersState, WeathersState::class.java)
     }

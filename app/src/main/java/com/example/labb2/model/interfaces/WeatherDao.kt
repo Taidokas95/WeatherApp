@@ -18,4 +18,8 @@ interface WeatherDao {
 
     @Query("SELECT * FROM weather")
     fun getWeathers(): List<Weather>
+
+    @Query("SELECT * FROM weather WHERE latitude =:latitude AND longitude =:longitude")
+    fun getWeathersFromCoordinates(latitude:Float, longitude:Float):Weather
+
 }
