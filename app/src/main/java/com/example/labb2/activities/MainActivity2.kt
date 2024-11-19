@@ -14,7 +14,7 @@ import com.example.labb2.ui.MainScreen
 import com.example.labb2.ui.theme.LabB2Theme
 import com.example.labb2.viewmodel.WeatherViewModel
 
-class MainActivity2 : ComponentActivity() {
+/*class MainActivity2 : ComponentActivity() {
 
     private val db by lazy {
         Room.databaseBuilder(
@@ -45,4 +45,4 @@ class MainActivity2 : ComponentActivity() {
             }
         }
     }
-}
+}*/

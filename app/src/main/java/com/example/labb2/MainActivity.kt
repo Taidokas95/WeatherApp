@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.example.labb2.model.WeatherDatabase
 import com.example.labb2.ui.MainScreen
+import com.example.labb2.ui.ScreenPreview
 import com.example.labb2.ui.theme.LabB2Theme
 import com.example.labb2.viewmodel.WeatherViewModel
 
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     // Instantiate the viewmodel
                     val weatherViewModel: WeatherViewModel = viewModel(factory = WeatherViewModel.Factory(db.dao))
 
-                    MainScreen(vm = weatherViewModel,onEvent = weatherViewModel::onEvent)
+                    MainScreen(vm = weatherViewModel/*,onEvent = weatherViewModel::onEvent*/)
 
                 }
             }
