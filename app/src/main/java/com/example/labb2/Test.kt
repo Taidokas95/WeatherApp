@@ -37,7 +37,7 @@ import com.google.gson.GsonBuilder
 
 
 // SQLite
-
+// TODO: Check that new branch works
 class Test (private val application: Application) {
 
 
