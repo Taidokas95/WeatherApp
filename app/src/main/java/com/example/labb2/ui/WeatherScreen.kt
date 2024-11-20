@@ -15,7 +15,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -76,6 +79,8 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
         WeatherInfo("2018-06-18", "12:00", "rainy", "16"),
         WeatherInfo("2018-06-19", "12:00", "sunny", "19")
     )
+    var lon by remember { mutableStateOf("") }
+    var lat by remember { mutableStateOf("") }
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -83,7 +88,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color.White, Color.Blue),
+                        colors = listOf(Color.White, Color(100,172,255)),
                         start = Offset(400f, 50f),
                         end = Offset.Infinite
                     )
@@ -93,7 +98,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -101,24 +106,24 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                         .padding(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Spacer(modifier = Modifier.height(56.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Weather Forecast",//text = "${weather.weathers[0].weatherDate} ${weather.weathers[0].weatherIcon} ${weather.weathers[0].temperature} ",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Location: Stockholm",//text = weather.location,
                         fontSize = 24.sp
                     )
-                    Spacer(modifier = Modifier.height(64.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     LazyColumn(
                         userScrollEnabled = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(350.dp)
+                            .height(100.dp)
                     ) {
                         items(weatherInfos.size) { index ->
                             var icon: Int
@@ -132,12 +137,12 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly,
                             ) {
-                                Column(
+                                Box(
                                     modifier = Modifier
+                                        .height(32.dp)
                                         .weight(1f)
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
+                                        .wrapContentSize(Alignment.Center)
+                                        .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Icon(
                                         painter = painterResource(id = icon),
@@ -145,12 +150,12 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         modifier = Modifier.size(32.dp, 32.dp)
                                     )
                                 }
-                                Column(
+                                Box(
                                     modifier = Modifier
+                                        .height(32.dp)
                                         .weight(1f)
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
+                                        .wrapContentSize(Alignment.Center)
+                                        .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
                                         text = weatherInfos.get(index).date,
@@ -158,12 +163,12 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         fontWeight = FontWeight.Medium
                                     )
                                 }
-                                Column(
+                                Box(
                                     modifier = Modifier
+                                        .height(32.dp)
                                         .weight(1f)
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
+                                        .wrapContentSize(Alignment.Center)
+                                        .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
                                         text = weatherInfos.get(index).time,
@@ -171,12 +176,12 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         fontWeight = FontWeight.Medium
                                     )
                                 }
-                                Column(
+                                Box(
                                     modifier = Modifier
+                                        .height(32.dp)
                                         .weight(1f)
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
+                                        .wrapContentSize(Alignment.Center)
+                                        .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
                                         text = weatherInfos.get(index).degrees + " C",
@@ -185,103 +190,126 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                     )
                                 }
                             }
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
-                    Spacer(modifier = Modifier.height(64.dp))
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        var lon by remember { mutableStateOf("") }
-                        var lat by remember { mutableStateOf("") }
-
-                        TextField(
-                            value = lon,
-                            onValueChange = { lon = it },
-                            label = {
-                                Text(
-                                    text = "Longitude",
-                                    style = TextStyle(
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                )
-                            },
-                            maxLines = 1,
-                            textStyle = TextStyle(
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.White,
-                                unfocusedContainerColor = Color.White,
-                                focusedLabelColor = Color.DarkGray,
-                                unfocusedLabelColor = Color.DarkGray
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        TextField(
-                            value = lat,
-                            onValueChange = { lon = it },
-                            label = {
-                                Text(
-                                    text = "Latitude",
-                                    style = TextStyle(
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                )
-                            },
-                            maxLines = 1,
-                            textStyle = TextStyle(
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.White,
-                                unfocusedContainerColor = Color.White,
-                                focusedLabelColor = Color.DarkGray,
-                                unfocusedLabelColor = Color.DarkGray
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(64.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Button(
-                            onClick = {
-                                //TODO: Insert cordinates here
-                                //onEvent(WeatherEvent.LoadWeather)
-                            },
+                        Row(
                             modifier = Modifier
-                                .size(100.dp, 60.dp)
-                                .border(2.dp, Color.White, RoundedCornerShape(32.dp)),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text(
-                                text = "Load",//text = weather.approvedTime,
-                                fontSize = 20.sp
+                            Box(
+                                modifier = Modifier
+                                    .height(64.dp)
+                                    .weight(1f)
                             )
+                            {
+                                TextField(
+                                    value = lon,
+                                    onValueChange = { lon = it },
+                                    label = {
+                                        Text(
+                                            text = "Longitude",
+                                            style = TextStyle(
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        )
+                                    },
+                                    maxLines = 1,
+                                    textStyle = TextStyle(
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.White,
+                                        unfocusedContainerColor = Color.White,
+                                        focusedLabelColor = Color.DarkGray,
+                                        unfocusedLabelColor = Color.DarkGray
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .height(64.dp)
+                                    .weight(1f)
+                            )
+                            {
+                                TextField(
+                                    value = lat,
+                                    onValueChange = { lon = it },
+                                    label = {
+                                        Text(
+                                            text = "Latitude",
+                                            style = TextStyle(
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        )
+                                    },
+                                    maxLines = 1,
+                                    textStyle = TextStyle(
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.White,
+                                        unfocusedContainerColor = Color.White,
+                                        focusedLabelColor = Color.DarkGray,
+                                        unfocusedLabelColor = Color.DarkGray
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                )
+                            }
                         }
-                        Button(
-                            onClick = {
-                                //TODO: Insert cordinates here
-                                //onEvent(WeatherEvent.setCoordinates(""))
-                            },
+                        Row(
                             modifier = Modifier
-                                .size(100.dp, 60.dp)
-                                .border(2.dp, Color.White, RoundedCornerShape(32.dp)),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = "Set",//text = weather.approvedTime,
-                                fontSize = 20.sp
-                            )
+                            Button(
+                                onClick = {
+                                    //TODO: Insert cordinates here
+                                    //onEvent(WeatherEvent.LoadWeather)
+                                },
+                                modifier = Modifier
+                                    .size(100.dp, 60.dp)
+                                    .border(2.dp, Color.Black, RoundedCornerShape(32.dp)),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                            ) {
+                                Text(
+                                    text = "Load",//text = weather.approvedTime,
+                                    fontSize = 20.sp,
+                                    color = Color.Black
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(64.dp))
+                            Button(
+                                onClick = {
+                                    //TODO: Insert cordinates here
+                                    //onEvent(WeatherEvent.setCoordinates(""))
+                                },
+                                modifier = Modifier
+                                    .size(100.dp, 60.dp)
+                                    .border(2.dp, Color.Black, RoundedCornerShape(32.dp)),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                            ) {
+                                Text(
+                                    text = "Set",//text = weather.approvedTime,
+                                    fontSize = 20.sp,
+                                    color = Color.Black
+                                )
+                            }
                         }
                     }
                 }
@@ -312,7 +340,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color.White, Color.Blue),
+                        colors = listOf(Color.White,  Color(100,172,255)),
                         start = Offset(400f, 50f),
                         end = Offset.Infinite
                     )
@@ -489,12 +517,13 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                             },
                             modifier = Modifier
                                 .size(100.dp, 60.dp)
-                                .border(2.dp, Color.White, RoundedCornerShape(32.dp)),
+                                .border(2.dp, Color.Black, RoundedCornerShape(32.dp)),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                         ) {
                             Text(
                                 text = "Load",//text = weather.approvedTime,
-                                fontSize = 20.sp
+                                fontSize = 20.sp,
+                                color = Color.Black
                             )
                         }
                         Button(
@@ -504,12 +533,13 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                             },
                             modifier = Modifier
                                 .size(100.dp, 60.dp)
-                                .border(2.dp, Color.White, RoundedCornerShape(32.dp)),
+                                .border(2.dp, Color.Black, RoundedCornerShape(32.dp)),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                         ) {
                             Text(
                                 text = "Set",//text = weather.approvedTime,
-                                fontSize = 20.sp
+                                fontSize = 20.sp,
+                                color = Color.Black
                             )
                         }
                     }
