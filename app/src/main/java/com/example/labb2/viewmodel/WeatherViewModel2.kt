@@ -1,6 +1,7 @@
 package com.example.labb2.viewmodel
 
 //import com.example.testlab1_2.myexternalresource.databasemymanager.interfaces.WeatherDao
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +11,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.labb2.model.Weather
 import com.example.labb2.model.WeathersConverter
 import com.example.labb2.model.WeathersState
-import com.example.labb2.model.getWeathersFromDatabase
-import com.example.labb2.model.interfaces.WeatherDao
+//import com.example.labb2.networkmanager.getWeathersFromDatabase
+import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.model.interfaces.WeatherEvent
+import com.example.labb2.networkmanager.NetworkManager
+import com.example.labb2.networkmanager.RunnableService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +36,8 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
     private val _currentListOfWeathers = MutableStateFlow(WeathersState())
     override val currentListOfWeathers: StateFlow<WeathersState>
         get() = _currentListOfWeathers.asStateFlow()
+
+   // private val networkManager = NetworkManager.createNetworkManager()
 
 
     companion object {
@@ -96,8 +101,22 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
             }
 
             is WeatherEvent.SetCoordinates ->{
+                _currentListOfWeathers.value.latitude = event.latitude
+                _currentListOfWeathers.value.longitude = event.longitude
+                //getWeathersFromDatabase(_currentListOfWeathers.value)
 
-                getWeathersFromDatabase(_currentListOfWeathers.value)
+                when(event.commands.invoke()){
+                    true -> {event.commands2.invoke(_currentListOfWeathers.value)}
+                    false ->{
+                        val backgroundJob = GlobalScope.launch(Dispatchers.Default){
+                            val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!, _currentListOfWeathers.value.longitude!!)
+                            val y = WeathersConverter().stringToWeather(x.weathers)
+                        }
+                    }
+                }
+
+                    //networkManager.runNetworkService(RunnableService.RetrofitRunner(_currentListOfWeathers.value))
+
 
                 /*val backgroundJob = GlobalScope.launch(Dispatchers.Default) {
                     //val latitude =  event.latitude

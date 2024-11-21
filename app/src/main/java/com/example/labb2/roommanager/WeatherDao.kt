@@ -1,4 +1,4 @@
-package com.example.labb2.model.interfaces
+package com.example.labb2.roommanager
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -21,5 +21,7 @@ interface WeatherDao {
 
     @Query("SELECT * FROM weather WHERE latitude =:latitude AND longitude =:longitude")
     fun getWeathersFromCoordinates(latitude:Float, longitude:Float):Weather
+
+
 
 }

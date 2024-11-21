@@ -18,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.labb2.R
 import com.example.labb2.model.interfaces.WeatherEvent
-import com.example.labb2.viewmodel.FakeVM
 import com.example.labb2.viewmodel.WeatherViewModelInterface
+import kotlin.reflect.KFunction1
 
 data class WeatherInfo(val date: String, val time: String, val type: String, val degrees: String)
 

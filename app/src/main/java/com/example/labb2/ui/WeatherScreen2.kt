@@ -31,14 +31,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
-import com.example.labb2.viewmodel.WeatherViewModel
 import com.example.labb2.viewmodel.WeatherViewModel2
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeatherScreen2(onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2){
+fun WeatherScreen2(
+    onEvent: (WeatherEvent) -> Unit,
+    vm: WeatherViewModel2,
+    commands: () -> Boolean,
+    commands2: (WeathersState) -> Unit
+){
 
     val weathers by vm.currentListOfWeathers.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -66,7 +72,7 @@ fun WeatherScreen2(onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2){
 
                 Button(onClick = {
                     //TODO: Insert cordinates here
-                    onEvent(WeatherEvent.SetCoordinates(latitude,longitude))
+                    onEvent(WeatherEvent.SetCoordinates(latitude, longitude, commands,commands2))
                 }) {
                     Text(
                         text = "Set",//text = weather.approvedTime,
@@ -127,7 +133,13 @@ fun WeatherScreen2(onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2){
                                 onClick = {
                                     latitude = label1.toFloat()
                                     longitude = label2.toFloat()
-                                    onEvent(WeatherEvent.SetCoordinates(latitude,longitude))
+                                    onEvent(WeatherEvent.SetCoordinates(
+                                        latitude,
+                                        longitude,
+                                        commands,
+                                        commands2
+                                    ))
+
                                     //WeatherEvent.SaveWeather
                                 }
                                 ,

@@ -6,10 +6,8 @@ import com.google.gson.Gson
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 
-@Entity
+@Entity(primaryKeys = ["latitude", "longitude"])
 data class Weather(
-    @PrimaryKey(autoGenerate = true)
-    val id:Int = 0,
     @TypeConverters(WeathersConverter::class) val weathers: String,
     val approvedTime:String,
     val latitude:Float,

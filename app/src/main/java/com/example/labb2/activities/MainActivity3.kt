@@ -16,11 +16,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 // Persistant
 
-import androidx.activity.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import com.example.labb2.model.WeatherDatabase
+import com.example.labb2.model.WeathersState
+import com.example.labb2.networkmanager.NetworkManager
+import com.example.labb2.networkmanager.RunnableService
+import com.example.labb2.roommanager.WeatherDatabase
 import com.example.labb2.ui.WeatherScreen2
 import com.example.labb2.ui.theme.LabB2Theme
 import com.example.labb2.viewmodel.WeatherViewModel2
@@ -38,6 +38,8 @@ class MainActivity3 : ComponentActivity() {
             //.addTypeConverter(WeathersConverter())
             .build()
     }
+
+    private val networkManager = NetworkManager.createNetworkManager()
 
     /*private val viewModel by viewModels<WeatherViewModel>(//viewModels<ContactViewModel>(
         factoryProducer = {
@@ -64,9 +66,18 @@ class MainActivity3 : ComponentActivity() {
                         factory = WeatherViewModel2.Factory(db.dao)//GameVM.Factory
                     )
 
+                    val x = {networkManager.isOnline(application)}
+                    val y = {weathersState: WeathersState -> networkManager.runNetworkService(RunnableService.RetrofitRunner(weathersState))}
+
+                    var z = listOf<Any>(x,y)
+
                     // Instantiate the homescreen with a text to speach class (MyTTS) with the ComponentActivity Context
                     //HomeScreen(vm = gameViewModel,MyTTS(this))
-                    WeatherScreen2(vm = weatherViewModel,onEvent = weatherViewModel::onEvent)
+                    WeatherScreen2(
+                        vm = weatherViewModel,
+                        onEvent = weatherViewModel::onEvent,
+                        commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState) -> Unit
+                    )
 
                     /*val config = resources.configuration
 
