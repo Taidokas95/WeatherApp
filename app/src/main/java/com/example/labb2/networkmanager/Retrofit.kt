@@ -43,7 +43,7 @@ class RetrofitImp:NetworkService {
         val call: Call<TheTestWeather> = jsonPlaceholderService.getWeather("lon/14.333/lat/60.383")
 
         localWeathersState.latitude = 60.383f
-        localWeathersState.longitude = 14.343f
+        localWeathersState.longitude = 14.333f
 
         val response = call.execute()
 

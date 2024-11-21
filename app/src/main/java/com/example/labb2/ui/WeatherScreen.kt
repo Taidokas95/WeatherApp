@@ -78,6 +78,7 @@ fun LandscapeLayout(
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("14.333") }
     var lat by remember { mutableStateOf("60.383") }
+
     val weatherLists = vm.currentListOfWeathers.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
@@ -256,7 +257,7 @@ fun LandscapeLayout(
                             {
                                 TextField(
                                     value = lat,
-                                    onValueChange = { lon = it },
+                                    onValueChange = { lat = it },
                                     label = {
                                         Text(
                                             text = "Latitude",
@@ -499,7 +500,7 @@ fun PortraitLayout(
                         Spacer(modifier = Modifier.height(4.dp))
                         TextField(
                             value = lat,
-                            onValueChange = { lon = it },
+                            onValueChange = { lat = it },
                             label = {
                                 Text(
                                     text = "Latitude",
