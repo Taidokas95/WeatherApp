@@ -22,6 +22,8 @@ interface WeatherViewModelInterface {
     val longitude: StateFlow<Float>
     val currentListOfWeathers: StateFlow<WeathersState>
 
+    fun setLongitude(float: Float)
+    fun setLatitude(float: Float)
     fun onEvent(event: WeatherEvent)
 }
 
@@ -36,6 +38,15 @@ class WeatherViewModel(private val dao: WeatherDao) : WeatherViewModelInterface,
     private val _current_ListOfWeathers = MutableStateFlow(WeathersState())
     override val currentListOfWeathers: StateFlow<WeathersState>
         get() = _current_ListOfWeathers.asStateFlow()
+
+    override fun setLongitude(float: Float) {
+        _longitude.value = float
+    }
+
+    override fun setLatitude(float: Float) {
+        _latitude.value = float
+    }
+
 
     companion object {
         fun Factory(dao: WeatherDao): ViewModelProvider.Factory {
@@ -77,6 +88,7 @@ class WeatherViewModel(private val dao: WeatherDao) : WeatherViewModelInterface,
                 viewModelScope.launch {
                     println("Hello")
                     println(dao.getWeathers())
+
                 }
             }
         }
@@ -93,6 +105,14 @@ class FakeVM : WeatherViewModelInterface {
     private val _current_ListOfWeathers = MutableStateFlow(WeathersState())
     override val currentListOfWeathers: StateFlow<WeathersState>
         get() = _current_ListOfWeathers.asStateFlow()
+
+    override fun setLongitude(float: Float) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setLatitude(float: Float) {
+        TODO("Not yet implemented")
+    }
 
     override fun onEvent(event: WeatherEvent) {
         TODO("Not yet implemented")

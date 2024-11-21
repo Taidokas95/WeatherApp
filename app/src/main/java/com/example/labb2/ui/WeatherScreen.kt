@@ -1,7 +1,6 @@
 package com.example.labb2.ui
 
 import android.content.res.Configuration
-import android.text.Layout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -39,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -69,7 +66,6 @@ fun MainScreen(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInterfac
 
 @Composable
 fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInterface) {
-    val snackBarHostState = remember { SnackbarHostState() }
     val weatherInfos = listOf(
         WeatherInfo("2018-06-13", "12:00", "sunny", "20"),
         WeatherInfo("2018-06-14", "12:00", "cloudy", "18"),
@@ -79,8 +75,12 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
         WeatherInfo("2018-06-18", "12:00", "rainy", "16"),
         WeatherInfo("2018-06-19", "12:00", "sunny", "19")
     )
+
+
+    val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("") }
     var lat by remember { mutableStateOf("") }
+    var weatherLists = vm.currentListOfWeathers.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -108,13 +108,13 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Weather Forecast",//text = "${weather.weathers[0].weatherDate} ${weather.weathers[0].weatherIcon} ${weather.weathers[0].temperature} ",
+                        text = "Weather Forecast",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Location: Stockholm",//text = weather.location,
+                        text = "Location: $lon, $lat",
                         fontSize = 24.sp
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -129,10 +129,29 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                             var icon: Int
                             when (weatherInfos.get(index).type) {
                                 "rainy" -> icon = R.drawable.rain
-                                "cloudy" -> icon = R.drawable.cloud
+                                "cloudy" -> icon = R.drawable.overcast
                                 "windy" -> icon = R.drawable.wind
                                 else -> icon = R.drawable.sun
                             }
+                            /*var weatherType = ${weatherLists.weather[index].weatherIcon}
+                            var icon = R.drawable.sun
+                            when (icon) {
+                                1 -> icon = R.drawable.sun //clear skies
+                                2 -> icon = R.drawable.cloud //partly cloudy
+                                3 -> icon = R.drawable.cloud //cloudy
+                                4 -> icon = R.drawable.overcast //overcast
+                                6 -> icon = R.drawable.rain //rain showers
+                                7 -> icon = R.drawable.snow //snow showers
+                                8 -> icon = R.drawable.thunder
+                                9 -> icon = R.drawable.rain //rain
+                                10 -> icon = R.drawable.snow //snow
+                                11 -> icon = R.drawable.rain//freezing rain
+                                12 -> icon = R.drawable.rain //drizzle
+                                13 -> icon = R.drawable.rain//freezing drizzle
+                                14 -> icon = R.drawable.thunder //thunder with rain
+                                15 -> icon = R.drawable.thunder //thunder with snow
+                                else -> icon = R.drawable.sun
+                            }*/
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -158,7 +177,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).date,
+                                        text = weatherInfos.get(index).date, //${weatherLists.weather[index].date}
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -171,7 +190,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).time,
+                                        text = weatherInfos.get(index).time, //${weatherLists.weather[index].time}
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -184,7 +203,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).degrees + " C",
+                                        text = weatherInfos.get(index).degrees + " C", //${weatherLists.weathers[index].temperature}
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -279,7 +298,6 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                         ) {
                             Button(
                                 onClick = {
-                                    //TODO: Insert cordinates here
                                     //onEvent(WeatherEvent.LoadWeather)
                                 },
                                 modifier = Modifier
@@ -296,7 +314,8 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                             Spacer(modifier = Modifier.width(64.dp))
                             Button(
                                 onClick = {
-                                    //TODO: Insert cordinates here
+                                    vm.setLongitude(lon.toFloat())
+                                    vm.setLatitude(lat.toFloat())
                                     //onEvent(WeatherEvent.setCoordinates(""))
                                 },
                                 modifier = Modifier
@@ -321,9 +340,6 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInterface) {
-
-    val weathers by vm.currentListOfWeathers.collectAsState()
-    val snackBarHostState = remember { SnackbarHostState() }
     val weatherInfos = listOf(
         WeatherInfo("2018-06-13", "12:00", "sunny", "20"),
         WeatherInfo("2018-06-14", "12:00", "cloudy", "18"),
@@ -333,6 +349,11 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
         WeatherInfo("2018-06-18", "12:00", "rainy", "16"),
         WeatherInfo("2018-06-19", "12:00", "sunny", "19")
     )
+
+    val weathers by vm.currentListOfWeathers.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
+    var lon by remember { mutableStateOf("") }
+    var lat by remember { mutableStateOf("") }
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -381,7 +402,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                             var icon: Int
                             when (weatherInfos.get(index).type) {
                                 "rainy" -> icon = R.drawable.rain
-                                "cloudy" -> icon = R.drawable.cloud
+                                "cloudy" -> icon = R.drawable.overcast
                                 "windy" -> icon = R.drawable.wind
                                 else -> icon = R.drawable.sun
                             }
@@ -446,9 +467,6 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                     }
                     Spacer(modifier = Modifier.height(64.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        var lon by remember { mutableStateOf("") }
-                        var lat by remember { mutableStateOf("") }
-
                         TextField(
                             value = lon,
                             onValueChange = { lon = it },
@@ -512,8 +530,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                     ) {
                         Button(
                             onClick = {
-                                //TODO: Insert cordinates here
-                                //onEvent(WeatherEvent.LoadWeather)
+                            //onEvent(WeatherEvent.LoadWeather)
                             },
                             modifier = Modifier
                                 .size(100.dp, 60.dp)
@@ -528,7 +545,8 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                         }
                         Button(
                             onClick = {
-                                //TODO: Insert cordinates here
+                                vm.setLongitude(lon.toFloat())
+                                vm.setLatitude(lat.toFloat())
                                 //onEvent(WeatherEvent.setCoordinates(""))
                             },
                             modifier = Modifier
