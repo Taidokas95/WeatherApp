@@ -18,14 +18,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -44,45 +43,42 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.labb2.R
-import com.example.labb2.viewmodel.FakeVM
+import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
+import com.example.labb2.viewmodel.WeatherViewModel
+import com.example.labb2.viewmodel.WeatherViewModel2
 import com.example.labb2.viewmodel.WeatherViewModelInterface
-import kotlin.reflect.KFunction1
 
 data class WeatherInfo(val date: String, val time: String, val type: String, val degrees: String)
 
 @Composable
-fun MainScreen(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInterface) {
+fun MainScreen(
+    onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
+    commands2: (WeathersState) -> Unit
+) {
     val orientation = LocalConfiguration.current.orientation
 
     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        LandscapeLayout(/*onEvent,*/ vm)
+        LandscapeLayout(onEvent, vm, commands, commands2)
     } else {
-        PortraitLayout(/*onEvent,*/ vm)
+        PortraitLayout(onEvent, vm, commands, commands2)
     }
 }
 
 @Composable
-fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInterface) {
-    val weatherInfos = listOf(
-        WeatherInfo("2018-06-13", "12:00", "sunny", "20"),
-        WeatherInfo("2018-06-14", "12:00", "cloudy", "18"),
-        WeatherInfo("2018-06-15", "12:00", "windy", "17"),
-        WeatherInfo("2018-06-16", "12:00", "rainy", "16"),
-        WeatherInfo("2018-06-17", "12:00", "sunny", "19"),
-        WeatherInfo("2018-06-18", "12:00", "rainy", "16"),
-        WeatherInfo("2018-06-19", "12:00", "sunny", "19")
-    )
-
-
+fun LandscapeLayout(
+    onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
+    commands2: (WeathersState) -> Unit
+) {
     val snackBarHostState = remember { SnackbarHostState() }
-    var lon by remember { mutableStateOf("") }
-    var lat by remember { mutableStateOf("") }
-    var weatherLists = vm.currentListOfWeathers.collectAsState()
+    var lon by remember { mutableStateOf("14.333") }
+    var lat by remember { mutableStateOf("60.383") }
+    val weatherLists = vm.currentListOfWeathers.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -90,7 +86,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color.White, Color(100,172,255)),
+                        colors = listOf(Color.White, Color(100, 172, 255)),
                         start = Offset(400f, 50f),
                         end = Offset.Infinite
                     )
@@ -127,33 +123,27 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                             .fillMaxWidth()
                             .height(100.dp)
                     ) {
-                        items(weatherInfos.size) { index ->
-                            var icon: Int
-                            when (weatherInfos.get(index).type) {
-                                "rainy" -> icon = R.drawable.rain
-                                "cloudy" -> icon = R.drawable.overcast
-                                "windy" -> icon = R.drawable.wind
+                        items(weatherLists.value.weathers.size) { index ->
+                            var weatherType = weatherLists.value.weathers[index].weatherIcon
+                            var icon = R.drawable.sun
+                            when (weatherType) {
+                                "1" -> icon = R.drawable.sun //clear skies
+                                "2" -> icon = R.drawable.cloud //partly cloudy
+                                "3" -> icon = R.drawable.cloud //cloudy
+                                "4" -> icon = R.drawable.overcast //overcast
+                                "5" -> icon = R.drawable.fog //fog
+                                "6" -> icon = R.drawable.rain //rain showers
+                                "7" -> icon = R.drawable.snow //snow showers
+                                "8" -> icon = R.drawable.thunder
+                                "9" -> icon = R.drawable.rain //rain
+                                "10" -> icon = R.drawable.snow //snow
+                                "11" -> icon = R.drawable.rain//freezing rain
+                                "12" -> icon = R.drawable.rain //drizzle
+                                "13" -> icon = R.drawable.rain//freezing drizzle
+                                "14" -> icon = R.drawable.thunder //thunder with rain
+                                "15" -> icon = R.drawable.thunder //thunder with snow
                                 else -> icon = R.drawable.sun
                             }
-                            /*var weatherType = ${weatherLists.weather[index].weatherIcon}
-                            var icon = R.drawable.sun
-                            when (icon) {
-                                1 -> icon = R.drawable.sun //clear skies
-                                2 -> icon = R.drawable.cloud //partly cloudy
-                                3 -> icon = R.drawable.cloud //cloudy
-                                4 -> icon = R.drawable.overcast //overcast
-                                6 -> icon = R.drawable.rain //rain showers
-                                7 -> icon = R.drawable.snow //snow showers
-                                8 -> icon = R.drawable.thunder
-                                9 -> icon = R.drawable.rain //rain
-                                10 -> icon = R.drawable.snow //snow
-                                11 -> icon = R.drawable.rain//freezing rain
-                                12 -> icon = R.drawable.rain //drizzle
-                                13 -> icon = R.drawable.rain//freezing drizzle
-                                14 -> icon = R.drawable.thunder //thunder with rain
-                                15 -> icon = R.drawable.thunder //thunder with snow
-                                else -> icon = R.drawable.sun
-                            }*/
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -179,7 +169,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).date, //${weatherLists.weather[index].date}
+                                        text = weatherLists.value.weathers[index].weatherDate,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -192,7 +182,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).time, //${weatherLists.weather[index].time}
+                                        text = weatherLists.value.approvedTime,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -205,7 +195,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).degrees + " C", //${weatherLists.weathers[index].temperature}
+                                        text = weatherLists.value.weathers[index].temperature.toString() + " C",
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -241,6 +231,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                             )
                                         )
                                     },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     maxLines = 1,
                                     textStyle = TextStyle(
                                         color = Color.Black,
@@ -275,6 +266,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                             )
                                         )
                                     },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     maxLines = 1,
                                     textStyle = TextStyle(
                                         color = Color.Black,
@@ -300,7 +292,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                         ) {
                             Button(
                                 onClick = {
-                                    //onEvent(WeatherEvent.LoadWeather)
+                                    onEvent(WeatherEvent.LoadWeather(lat.toFloat(), lon.toFloat()))
                                 },
                                 modifier = Modifier
                                     .size(100.dp, 60.dp)
@@ -308,7 +300,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
-                                    text = "Load",//text = weather.approvedTime,
+                                    text = "Load",
                                     fontSize = 20.sp,
                                     color = Color.Black
                                 )
@@ -316,9 +308,16 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                             Spacer(modifier = Modifier.width(64.dp))
                             Button(
                                 onClick = {
-                                    vm.setLongitude(lon.toFloat())
-                                    vm.setLatitude(lat.toFloat())
-                                    //onEvent(WeatherEvent.setCoordinates(""))
+                                    //vm.setLongitude(lon.toFloat())
+                                    //vm.setLatitude(lat.toFloat())
+                                    onEvent(
+                                        WeatherEvent.SetCoordinates(
+                                            lat.toFloat(),
+                                            lon.toFloat(),
+                                            commands,
+                                            commands2
+                                        )
+                                    )
                                 },
                                 modifier = Modifier
                                     .size(100.dp, 60.dp)
@@ -326,7 +325,7 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
-                                    text = "Set",//text = weather.approvedTime,
+                                    text = "Set",
                                     fontSize = 20.sp,
                                     color = Color.Black
                                 )
@@ -339,23 +338,15 @@ fun LandscapeLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInt
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInterface) {
-    val weatherInfos = listOf(
-        WeatherInfo("2018-06-13", "12:00", "sunny", "20"),
-        WeatherInfo("2018-06-14", "12:00", "cloudy", "18"),
-        WeatherInfo("2018-06-15", "12:00", "windy", "17"),
-        WeatherInfo("2018-06-16", "12:00", "rainy", "16"),
-        WeatherInfo("2018-06-17", "12:00", "sunny", "19"),
-        WeatherInfo("2018-06-18", "12:00", "rainy", "16"),
-        WeatherInfo("2018-06-19", "12:00", "sunny", "19")
-    )
-
-    val weathers by vm.currentListOfWeathers.collectAsState()
+fun PortraitLayout(
+    onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
+    commands2: (WeathersState) -> Unit
+) {
+    val weatherLists by vm.currentListOfWeathers.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
-    var lon by remember { mutableStateOf("") }
-    var lat by remember { mutableStateOf("") }
+    var lon by remember { mutableStateOf("14.333") }
+    var lat by remember { mutableStateOf("60.383") }
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -363,7 +354,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color.White,  Color(100,172,255)),
+                        colors = listOf(Color.White, Color(100, 172, 255)),
                         start = Offset(400f, 50f),
                         end = Offset.Infinite
                     )
@@ -383,24 +374,37 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                 ) {
                     Spacer(modifier = Modifier.height(56.dp))
                     Text(
-                        text = "Weather Forecast",//text = "${weather.weathers[0].weatherDate} ${weather.weathers[0].weatherIcon} ${weather.weathers[0].temperature} ",
+                        text = "Weather Forecast",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Location: Stockholm",//text = weather.location,
+                        text = "Location: $lon, $lat",
                         fontSize = 24.sp
                     )
                     Spacer(modifier = Modifier.height(32.dp))
 
                     LazyColumn {
-                        items(weatherInfos.size) { index ->
-                            var icon: Int
-                            when (weatherInfos.get(index).type) {
-                                "rainy" -> icon = R.drawable.rain
-                                "cloudy" -> icon = R.drawable.overcast
-                                "windy" -> icon = R.drawable.wind
+                        items(weatherLists.weathers.size) { index ->
+                            var weatherType = weatherLists.weathers[index].weatherIcon
+                            var icon = R.drawable.sun
+                            when (weatherType) {
+                                "1" -> icon = R.drawable.sun //clear skies
+                                "2" -> icon = R.drawable.cloud //partly cloudy
+                                "3" -> icon = R.drawable.cloud //cloudy
+                                "4" -> icon = R.drawable.overcast //overcast
+                                "5" -> icon = R.drawable.fog //fog
+                                "6" -> icon = R.drawable.rain //rain showers
+                                "7" -> icon = R.drawable.snow //snow showers
+                                "8" -> icon = R.drawable.thunder
+                                "9" -> icon = R.drawable.rain //rain
+                                "10" -> icon = R.drawable.snow //snow
+                                "11" -> icon = R.drawable.rain//freezing rain
+                                "12" -> icon = R.drawable.rain //drizzle
+                                "13" -> icon = R.drawable.rain//freezing drizzle
+                                "14" -> icon = R.drawable.thunder //thunder with rain
+                                "15" -> icon = R.drawable.thunder //thunder with snow
                                 else -> icon = R.drawable.sun
                             }
                             Row(
@@ -428,7 +432,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).date,
+                                        text = weatherLists.weathers[index].weatherDate,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -441,7 +445,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).time,
+                                        text = weatherLists.approvedTime,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -454,7 +458,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = weatherInfos.get(index).degrees + " C",
+                                        text = weatherLists.weathers[index].temperature.toString() + " C",
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -476,6 +480,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                                     )
                                 )
                             },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             maxLines = 1,
                             textStyle = TextStyle(
                                 color = Color.Black,
@@ -504,6 +509,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                                     )
                                 )
                             },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             maxLines = 1,
                             textStyle = TextStyle(
                                 color = Color.Black,
@@ -527,7 +533,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                     ) {
                         Button(
                             onClick = {
-                            //onEvent(WeatherEvent.LoadWeather)
+                                onEvent(WeatherEvent.LoadWeather(lat.toFloat(), lon.toFloat()))
                             },
                             modifier = Modifier
                                 .size(100.dp, 60.dp)
@@ -535,16 +541,23 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                         ) {
                             Text(
-                                text = "Load",//text = weather.approvedTime,
+                                text = "Load",
                                 fontSize = 20.sp,
                                 color = Color.Black
                             )
                         }
                         Button(
                             onClick = {
-                                vm.setLongitude(lon.toFloat())
-                                vm.setLatitude(lat.toFloat())
-                                //onEvent(WeatherEvent.setCoordinates(""))
+                                //vm.setLongitude(lon.toFloat())
+                                //vm.setLatitude(lat.toFloat())
+                                onEvent(
+                                    WeatherEvent.SetCoordinates(
+                                        lat.toFloat(),
+                                        lon.toFloat(),
+                                        commands,
+                                        commands2
+                                    )
+                                )
                             },
                             modifier = Modifier
                                 .size(100.dp, 60.dp)
@@ -552,14 +565,13 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                         ) {
                             Text(
-                                text = "Set",//text = weather.approvedTime,
+                                text = "Set",
                                 fontSize = 20.sp,
                                 color = Color.Black
                             )
                         }
                     }
                 }
-
             }
         }
     }
@@ -578,5 +590,5 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
 @Composable
 fun ScreenPreview(
 ) {
-    Surface { LandscapeLayout(FakeVM()) }
+    //Surface { LandscapeLayout(FakeVM()) }
 }

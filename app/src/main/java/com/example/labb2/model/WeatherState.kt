@@ -2,7 +2,7 @@ package com.example.labb2.model
 
 data class WeatherState(
     val weatherDate:String,
-    val weatherType:String,
+    val weatherIcon:String,
     val temperature:Float,
 )
 

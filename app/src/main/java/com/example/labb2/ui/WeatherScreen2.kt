@@ -37,14 +37,13 @@ import com.example.labb2.viewmodel.WeatherViewModel2
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen2(
     onEvent: (WeatherEvent) -> Unit,
     vm: WeatherViewModel2,
     commands: () -> Boolean,
     commands2: (WeathersState) -> Unit
-){
+) {
 
     val weathers by vm.currentListOfWeathers.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -55,11 +54,12 @@ fun WeatherScreen2(
     var label2 by remember { mutableStateOf("") }
 
 
-    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }){
+    Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
 
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "hello",//text = "${weather.weathers[0].weatherDate} ${weather.weathers[0].weatherIcon} ${weather.weathers[0].temperature} ",
@@ -68,15 +68,17 @@ fun WeatherScreen2(
 
                 Text(
                     text = "hello 2",//text = weather.approvedTime,
-                    fontSize = 12.sp)
+                    fontSize = 12.sp
+                )
 
                 Button(onClick = {
                     //TODO: Insert cordinates here
-                    onEvent(WeatherEvent.SetCoordinates(latitude, longitude, commands,commands2))
+                    onEvent(WeatherEvent.SetCoordinates(latitude, longitude, commands, commands2))
                 }) {
                     Text(
                         text = "Set",//text = weather.approvedTime,
-                        fontSize = 12.sp)
+                        fontSize = 12.sp
+                    )
                 }
 
                 Button(onClick = {
@@ -85,17 +87,19 @@ fun WeatherScreen2(
                 }) {
                     Text(
                         text = "Save",//text = weather.approvedTime,
-                        fontSize = 12.sp)
+                        fontSize = 12.sp
+                    )
                 }
 
                 Button(onClick = {
 
                     //TODO: Insert cordinates here
-                    onEvent(WeatherEvent.LoadWeather(latitude,longitude))
+                    onEvent(WeatherEvent.LoadWeather(latitude, longitude))
                 }) {
                     Text(
                         text = "load",//text = weather.approvedTime,
-                        fontSize = 12.sp)
+                        fontSize = 12.sp
+                    )
                 }
 
                 Box(
@@ -104,22 +108,24 @@ fun WeatherScreen2(
                 ) {
 
                     LazyColumn {
-                        item{
+                        item {
                             LazyRow {
 
                                 item {
-                                    TextField(value = label1,
-                                        onValueChange = {label1 = it},
-                                        label = {Text("Latitude")},
+                                    TextField(
+                                        value = label1,
+                                        onValueChange = { label1 = it },
+                                        label = { Text("Latitude") },
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                                     )
                                     Spacer(Modifier.padding(5.dp))
                                 }
 
                                 item {
-                                    TextField(value = label2,
-                                        onValueChange = {label2 = it},
-                                        label = {Text("Longitude")},
+                                    TextField(
+                                        value = label2,
+                                        onValueChange = { label2 = it },
+                                        label = { Text("Longitude") },
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                                     )
                                     Spacer(Modifier.padding(5.dp))
@@ -133,16 +139,17 @@ fun WeatherScreen2(
                                 onClick = {
                                     latitude = label1.toFloat()
                                     longitude = label2.toFloat()
-                                    onEvent(WeatherEvent.SetCoordinates(
-                                        latitude,
-                                        longitude,
-                                        commands,
-                                        commands2
-                                    ))
+                                    onEvent(
+                                        WeatherEvent.SetCoordinates(
+                                            latitude,
+                                            longitude,
+                                            commands,
+                                            commands2
+                                        )
+                                    )
 
                                     //WeatherEvent.SaveWeather
-                                }
-                                ,
+                                },
                                 modifier = Modifier.background(
                                     Color.Green,
                                     RoundedCornerShape(5.dp)
@@ -157,7 +164,6 @@ fun WeatherScreen2(
 
 
                 }
-
 
 
             }

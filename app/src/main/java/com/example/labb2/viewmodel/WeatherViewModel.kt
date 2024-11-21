@@ -32,9 +32,9 @@ class WeatherViewModel(private val dao: WeatherDao) : WeatherViewModelInterface,
     private val _longitude = MutableStateFlow(-1f)
     override val longitude: StateFlow<Float>
         get() = _longitude
-    private val _current_ListOfWeathers = MutableStateFlow(WeathersState())
+    private val _currentListOfWeathers = MutableStateFlow(WeathersState())
     override val currentListOfWeathers: StateFlow<WeathersState>
-        get() = _current_ListOfWeathers.asStateFlow()
+        get() = _currentListOfWeathers
 
     override fun setLongitude(float: Float) {
         _longitude.value = float

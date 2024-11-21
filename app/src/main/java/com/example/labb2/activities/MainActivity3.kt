@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 // Persistant
@@ -21,7 +20,7 @@ import com.example.labb2.model.WeathersState
 import com.example.labb2.networkmanager.NetworkManager
 import com.example.labb2.networkmanager.RunnableService
 import com.example.labb2.roommanager.WeatherDatabase
-import com.example.labb2.ui.WeatherScreen2
+import com.example.labb2.ui.MainScreen
 import com.example.labb2.ui.theme.LabB2Theme
 import com.example.labb2.viewmodel.WeatherViewModel2
 
@@ -73,7 +72,7 @@ class MainActivity3 : ComponentActivity() {
 
                     // Instantiate the homescreen with a text to speach class (MyTTS) with the ComponentActivity Context
                     //HomeScreen(vm = gameViewModel,MyTTS(this))
-                    WeatherScreen2(
+                    MainScreen(
                         vm = weatherViewModel,
                         onEvent = weatherViewModel::onEvent,
                         commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState) -> Unit

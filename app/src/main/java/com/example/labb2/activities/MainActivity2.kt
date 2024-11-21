@@ -14,7 +14,7 @@ import com.example.labb2.ui.MainScreen
 import com.example.labb2.ui.theme.LabB2Theme
 import com.example.labb2.viewmodel.WeatherViewModel
 
-/*class MainActivity2 : ComponentActivity() {
+class MainActivity2 : ComponentActivity() {
 
     private val db by lazy {
         Room.databaseBuilder(
@@ -39,10 +39,10 @@ import com.example.labb2.viewmodel.WeatherViewModel
                     val weatherViewModel: WeatherViewModel = viewModel(
                         factory = WeatherViewModel.Factory(db.dao)//GameVM.Factory
                     )
-                    MainScreen(onEvent = weatherViewModel::onEvent,vm = weatherViewModel)
+                    //MainScreen(onEvent = weatherViewModel::onEvent,vm = weatherViewModel)
 
                 }
             }
         }
     }
-}*/
+}
