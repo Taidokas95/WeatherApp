@@ -49,7 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.labb2.R
 import com.example.labb2.viewmodel.FakeVM
+import com.example.labb2.model.interfaces.WeatherEvent
 import com.example.labb2.viewmodel.WeatherViewModelInterface
+import kotlin.reflect.KFunction1
 
 data class WeatherInfo(val date: String, val time: String, val type: String, val degrees: String)
 
@@ -390,14 +392,9 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                         text = "Location: Stockholm",//text = weather.location,
                         fontSize = 24.sp
                     )
-                    Spacer(modifier = Modifier.height(64.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
-                    LazyColumn(
-                        userScrollEnabled = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(350.dp)
-                    ) {
+                    LazyColumn {
                         items(weatherInfos.size) { index ->
                             var icon: Int
                             when (weatherInfos.get(index).type) {
@@ -562,6 +559,7 @@ fun PortraitLayout(/*onEvent: (WeatherEvent) -> Unit,*/ vm: WeatherViewModelInte
                         }
                     }
                 }
+
             }
         }
     }

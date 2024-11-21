@@ -1,11 +1,18 @@
 package com.example.labb2.model.interfaces
 
+import com.example.labb2.model.WeathersState
+
 
 interface WeatherEvent {
 
     object SaveWeather: WeatherEvent
-    object LoadWeather: WeatherEvent
-    data class setCoordinates(val coordinates:String): WeatherEvent
+    data class LoadWeather(val latitude:Float,val longitude: Float): WeatherEvent
+    data class SetCoordinates(
+        val latitude: Float,
+        val longitude: Float,
+        val commands: () -> Boolean,
+        val commands2: (WeathersState) -> Unit
+    ): WeatherEvent
     //data class DeleteWeathers(val weather: Weather): WeatherEvent
 
 }

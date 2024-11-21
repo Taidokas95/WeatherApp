@@ -7,7 +7,8 @@ data class WeatherState(
 )
 
 data class WeathersState(
-    val weathers:List<WeatherState> = emptyList(),
-    val approvedTime:String = "",
-    val coordinates:String = ""
+    val weathers:MutableList<WeatherState> = mutableListOf(),
+    var approvedTime:String = "",
+    var latitude:Float? = null,
+    var longitude:Float? = null
 )
