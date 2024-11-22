@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -78,8 +79,8 @@ fun LandscapeLayout(
     commands2: (WeathersState) -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
-    var lon by remember { mutableStateOf("14.333") }
-    var lat by remember { mutableStateOf("60.383") }
+    var lon by remember { mutableStateOf("") }
+    var lat by remember { mutableStateOf("") }
     var latitude = -1f
     var longitude = -1f
     val weatherLists = vm.currentListOfWeathers.collectAsState()
@@ -119,13 +120,14 @@ fun LandscapeLayout(
                         text = "Location: $lon, $lat",
                         fontSize = 24.sp
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     LazyColumn(
                         userScrollEnabled = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp)
+                            .height(80.dp)
+                            .border(2.dp,Color.Black)
                     ) {
                         items(weatherLists.value.weathers.size) { index ->
                             var weatherType: String
@@ -220,7 +222,7 @@ fun LandscapeLayout(
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
@@ -403,9 +405,15 @@ fun PortraitLayout(
                         text = "Location: $lon, $lat",
                         fontSize = 24.sp
                     )
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(64.dp))
 
-                    LazyColumn {
+                    LazyColumn(
+                        userScrollEnabled = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .border(2.dp,Color.Black)
+                    ) {
                         items(weatherLists.weathers.size) { index ->
                             var weatherType: String
                             var date = ""
@@ -497,7 +505,7 @@ fun PortraitLayout(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(64.dp))
+                    Spacer(modifier = Modifier.height(90.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
                         TextField(
                             value = lon,
