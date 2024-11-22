@@ -1,22 +1,18 @@
 package com.example.labb2.viewmodel
 
 //import com.example.testlab1_2.myexternalresource.databasemymanager.interfaces.WeatherDao
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.labb2.CustomStringResourcesClass
 import com.example.labb2.model.Weather
 import com.example.labb2.model.WeathersConverter
 import com.example.labb2.model.WeathersState
 //import com.example.labb2.networkmanager.getWeathersFromDatabase
 import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.model.interfaces.WeatherEvent
-import com.example.labb2.networkmanager.NetworkManager
-import com.example.labb2.networkmanager.RunnableService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,17 +20,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import kotlin.time.TimeSource
 
 interface WeatherViewModelInterface2 {
 
     val currentListOfWeathers:StateFlow<WeathersState>
+
     val currentTime:StateFlow<Long>
 
-    fun updateTime():Boolean
-
     fun onEvent(event: WeatherEvent)
+
+    fun updateTime():Boolean
 }
 
 class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,ViewModel() {
@@ -49,10 +44,10 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
 
 
     override fun updateTime(): Boolean {
-         if( System.currentTimeMillis() >= (_currentTime.value + 5000L)){
-             _currentTime.value = System.currentTimeMillis()
-             return true
-         }
+        if( System.currentTimeMillis() >= (_currentTime.value + 5000L)){
+            _currentTime.value = System.currentTimeMillis()
+            return true
+        }
         _currentTime.value = System.currentTimeMillis()
         return false
     }
@@ -92,21 +87,31 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                         Weather(
                             weathers = WeathersConverter().weathersToString(_currentListOfWeathers.value),
                             approvedTime = _currentListOfWeathers.value.approvedTime,
-                            latitude = _currentListOfWeathers.value.latitude!!,
-                            longitude = _currentListOfWeathers.value.longitude!!
+                            latitude = _currentListOfWeathers.value.latitude!!.toString(),
+                            longitude = _currentListOfWeathers.value.longitude!!.toString()
                         )
                     )
                 }
             }
 
-            //TODO: Finish the implementation
             is WeatherEvent.LoadWeather ->{
                 val backgroundJob = GlobalScope.launch(Dispatchers.Default) {
                     // Code to be executed on the background thread
 
+                    _currentListOfWeathers.value.latitude = event.latitude
+                    _currentListOfWeathers.value.longitude = event.longitude
+
+                    println("latitude = ${event.latitude}")
+                    println("longitude = ${event.longitude}")
+
                     //val x = dao.getWeathers()
-                    val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!, _currentListOfWeathers.value.longitude!!)
+
+                    val x = dao.getWeathersFromCoordinates(event.latitude.toString(), event.longitude.toString())
+                    println(x)
                     val y = WeathersConverter().stringToWeather(x.weathers)
+
+                    //TODO: Important for setting current value
+                    _currentListOfWeathers.value = y
 
                     // When your task is complete and you want to update the UI or perform other tasks on the main thread, use Dispatchers.Main
                     withContext(Dispatchers.Main) {
@@ -115,7 +120,7 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                         println("Coordinates = [${y.latitude};${y.longitude}]")
                         println("Approved time = ${y.approvedTime}")
                         for(w in y.weathers){
-                            println("Temperature = ${w.temperature}, Symbol = ${w.weatherIcon}, date = ${CustomStringResourcesClass.parseDateToString(w.weatherDate)}")
+                            println("Temperature = ${w.temperature}, Symbol = ${w.weatherIcon}, date = ${w.weatherDate}")
                         }
                     }
                 }
@@ -124,24 +129,22 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
             is WeatherEvent.SetCoordinates ->{
                 _currentListOfWeathers.value.latitude = event.latitude
                 _currentListOfWeathers.value.longitude = event.longitude
-                //getWeathersFromDatabase(_currentListOfWeathers.value)
 
                 when(event.commands.invoke()){
                     true -> {
-                        if(updateTime()){
-                            event.commands2.invoke(_currentListOfWeathers.value)
-                        }
-                        //_currentTime.value = System.currentTimeMillis()
+                        if(updateTime())
+                            event.commands2.invoke(_currentListOfWeathers.value,dao)
+                        else println("TOO Fast")
                     }
                     false ->{
                         val backgroundJob = GlobalScope.launch(Dispatchers.Default){
-                            val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!, _currentListOfWeathers.value.longitude!!)
+                            val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!.toString(),
+                                _currentListOfWeathers.value.longitude!!.toString()
+                            )
                             val y = WeathersConverter().stringToWeather(x.weathers)
                         }
                     }
                 }
-
-                    //networkManager.runNetworkService(RunnableService.RetrofitRunner(_currentListOfWeathers.value))
 
 
                 /*val backgroundJob = GlobalScope.launch(Dispatchers.Default) {

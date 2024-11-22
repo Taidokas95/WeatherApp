@@ -40,7 +40,7 @@ class NetworkManager {
     }
 
     fun runNetworkService(value: RunnableService.RetrofitRunner) {
-        retrofitImp!!.runService(value.localWeathersState)
+        retrofitImp!!.runService(value)
     }
 
 }

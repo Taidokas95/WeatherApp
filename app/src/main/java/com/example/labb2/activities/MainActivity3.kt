@@ -19,6 +19,7 @@ import androidx.room.Room
 import com.example.labb2.model.WeathersState
 import com.example.labb2.networkmanager.NetworkManager
 import com.example.labb2.networkmanager.RunnableService
+import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.roommanager.WeatherDatabase
 import com.example.labb2.ui.MainScreen
 import com.example.labb2.ui.theme.LabB2Theme
@@ -66,7 +67,13 @@ class MainActivity3 : ComponentActivity() {
                     )
 
                     val x = {networkManager.isOnline(application)}
-                    val y = {weathersState: WeathersState -> networkManager.runNetworkService(RunnableService.RetrofitRunner(weathersState))}
+                    val y = {
+                        weathersState: WeathersState, dao: WeatherDao
+                        -> networkManager
+                            .runNetworkService(
+                                RunnableService.RetrofitRunner(weathersState,dao)
+                            )
+                    }
 
                     var z = listOf<Any>(x,y)
 
@@ -75,7 +82,7 @@ class MainActivity3 : ComponentActivity() {
                     MainScreen(
                         vm = weatherViewModel,
                         onEvent = weatherViewModel::onEvent,
-                        commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState) -> Unit
+                        commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState, WeatherDao) -> Unit
                     )
 
                     /*val config = resources.configuration

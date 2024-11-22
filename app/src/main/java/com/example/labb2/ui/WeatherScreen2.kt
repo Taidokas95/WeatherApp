@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -33,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
+import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.viewmodel.WeatherViewModel2
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -42,7 +43,7 @@ fun WeatherScreen2(
     onEvent: (WeatherEvent) -> Unit,
     vm: WeatherViewModel2,
     commands: () -> Boolean,
-    commands2: (WeathersState) -> Unit
+    commands2: (WeathersState,WeatherDao) -> Unit
 ) {
 
     val weathers by vm.currentListOfWeathers.collectAsState()
