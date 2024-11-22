@@ -1,17 +1,18 @@
 package com.example.labb2.networkmanager
 
 
+import com.example.labb2.CustomStringResourcesClass
 import com.example.labb2.model.WeatherState
 import com.example.labb2.model.WeathersState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -37,13 +38,18 @@ class RetrofitImp:NetworkService {
     fun runService(localWeathersState: WeathersState) = GlobalScope.launch(Dispatchers.Default) {
         // Define the URL of the RESTful API you want to call
         val jsonPlaceholderService =
-            RetrofitClient.retrofit.create(JsonPlaceholderService::class.java)
+            //RetrofitClient.retrofit.create(JsonPlaceholderService::class.java)
+            RetrofitClient.createRetrofit("https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/").create(JsonPlaceholderService::class.java)
 
         // Make the API call to retrieve the post with ID 1
-        val call: Call<TheTestWeather> = jsonPlaceholderService.getWeather("lon/14.333/lat/60.383")
+        //val call: Call<TheTestWeather> = jsonPlaceholderService.getWeather("lon/14.333/lat/60.383")
+        val call: Call<TheTestWeather> = jsonPlaceholderService.getWeather2(
+            localWeathersState.longitude.toString(),localWeathersState.latitude.toString()
+            //"lon/${localWeathersState.longitude.toString()}/lat/${localWeathersState.latitude.toString()}"
+        )
 
-        localWeathersState.latitude = 60.383f
-        localWeathersState.longitude = 14.343f
+        //localWeathersState.latitude = 60.383f
+        //localWeathersState.longitude = 14.343f
 
         val response = call.execute()
 
@@ -53,7 +59,7 @@ class RetrofitImp:NetworkService {
 
                 if(post!=null){
                     println(post.approvedTime)
-                    localWeathersState.approvedTime = post.approvedTime
+                    localWeathersState.approvedTime = CustomStringResourcesClass.parseDateToString(post.approvedTime)//post.approvedTime
 
                     for(timeSeries in post.timeSeries){
                         println("size of parameters = ${timeSeries.parameters.size}")
@@ -65,7 +71,7 @@ class RetrofitImp:NetworkService {
                             else if(parameters.name == "Wsymb2") icon = parameters.values[0].toString()
                         }
                         localWeathersState.weathers.add(
-                            WeatherState(timeSeries.validTime, icon, temperature)
+                            WeatherState(CustomStringResourcesClass.parseDateToString(timeSeries.validTime), icon, temperature)
                         )
                     }
 
@@ -92,6 +98,10 @@ class RetrofitImp:NetworkService {
     interface JsonPlaceholderService {
         @GET("/weather/forecast")
         fun getWeather(@Query("lonLat") lonLat:String):Call<TheTestWeather>
+
+        @GET("lon/{lonId}/lat/{latId}/data.json")
+        fun getWeather2(@Path("lonId") lonId: String, @Path("latId") latId:String):Call<TheTestWeather>
+
     }
 
     object RetrofitClient {
@@ -101,6 +111,12 @@ class RetrofitImp:NetworkService {
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+
+        fun createRetrofit(baseUrl:String) = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
     }
 
 

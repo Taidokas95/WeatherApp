@@ -53,6 +53,7 @@ fun WeatherScreen2(
     var label1 by remember { mutableStateOf("") }
     var label2 by remember { mutableStateOf("") }
 
+    val time by vm.currentTime.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
 
