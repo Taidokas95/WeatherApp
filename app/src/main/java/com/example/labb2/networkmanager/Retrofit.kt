@@ -53,7 +53,6 @@ class RetrofitImp:NetworkService {
 
 
         withContext(Dispatchers.Main) {
-           //println(localWeathersState)
             value.dao.upsertWeather(
                 Weather(
                     weathers = WeathersConverter().weathersToString(value.localWeathersState),

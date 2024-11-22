@@ -87,9 +87,13 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                     //_currentListOfWeathers.value.longitude = event.longitude
 
                     //val x = dao.getWeathers()
+
                     val x = dao.getWeathersFromCoordinates(event.latitude, event.longitude)
                     println(x)
                     val y = WeathersConverter().stringToWeather(x.weathers)
+
+                    //TODO: Important for setting current value
+                    _currentListOfWeathers.value = y
 
                     // When your task is complete and you want to update the UI or perform other tasks on the main thread, use Dispatchers.Main
                     withContext(Dispatchers.Main) {
@@ -107,28 +111,9 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
             is WeatherEvent.SetCoordinates ->{
                 _currentListOfWeathers.value.latitude = event.latitude
                 _currentListOfWeathers.value.longitude = event.longitude
-                //getWeathersFromDatabase(_currentListOfWeathers.value)
 
                 when(event.commands.invoke()){
-                    true -> {
-                        //val backgroundJob = GlobalScope.launch(Dispatchers.Default){
-                            event.commands2.invoke(_currentListOfWeathers.value,dao)
-
-                            /*withContext(Dispatchers.Main) {
-
-                                    dao.upsertWeather(
-                                        Weather(
-                                            weathers = WeathersConverter().weathersToString(_currentListOfWeathers.value),
-                                            approvedTime = _currentListOfWeathers.value.approvedTime,
-                                            latitude = _currentListOfWeathers.value.latitude!!,
-                                            longitude = _currentListOfWeathers.value.longitude!!
-                                        )
-                                    )
-                                }*/
-
-                        //}
-
-                    }
+                    true -> { event.commands2.invoke(_currentListOfWeathers.value,dao) }
                     false ->{
                         val backgroundJob = GlobalScope.launch(Dispatchers.Default){
                             val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!, _currentListOfWeathers.value.longitude!!)
@@ -136,8 +121,6 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                         }
                     }
                 }
-
-                    //networkManager.runNetworkService(RunnableService.RetrofitRunner(_currentListOfWeathers.value))
 
 
                 /*val backgroundJob = GlobalScope.launch(Dispatchers.Default) {
