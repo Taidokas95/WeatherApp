@@ -50,15 +50,16 @@ import androidx.compose.ui.unit.sp
 import com.example.labb2.R
 import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
-import com.example.labb2.roommanager.WeatherDao
+import com.example.labb2.viewmodel.WeatherViewModel
 import com.example.labb2.viewmodel.WeatherViewModel2
+import com.example.labb2.viewmodel.WeatherViewModelInterface
 
 data class WeatherInfo(val date: String, val time: String, val type: String, val degrees: String)
 
 @Composable
 fun MainScreen(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState, WeatherDao) -> Unit
+    commands2: (WeathersState) -> Unit
 ) {
     val orientation = LocalConfiguration.current.orientation
 
@@ -72,12 +73,11 @@ fun MainScreen(
 @Composable
 fun LandscapeLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState, WeatherDao) -> Unit
+    commands2: (WeathersState) -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("14.333") }
     var lat by remember { mutableStateOf("60.383") }
-
     val weatherLists = vm.currentListOfWeathers.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
@@ -256,7 +256,7 @@ fun LandscapeLayout(
                             {
                                 TextField(
                                     value = lat,
-                                    onValueChange = { lat = it },
+                                    onValueChange = { lon = it },
                                     label = {
                                         Text(
                                             text = "Latitude",
@@ -341,7 +341,7 @@ fun LandscapeLayout(
 @Composable
 fun PortraitLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState, WeatherDao) -> Unit
+    commands2: (WeathersState) -> Unit
 ) {
     val weatherLists by vm.currentListOfWeathers.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -499,7 +499,7 @@ fun PortraitLayout(
                         Spacer(modifier = Modifier.height(4.dp))
                         TextField(
                             value = lat,
-                            onValueChange = { lat = it },
+                            onValueChange = { lon = it },
                             label = {
                                 Text(
                                     text = "Latitude",
