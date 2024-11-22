@@ -111,10 +111,10 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
 
                 when(event.commands.invoke()){
                     true -> {
-                        val backgroundJob = GlobalScope.launch(Dispatchers.Default){
-                        event.commands2.invoke(_currentListOfWeathers.value)
+                        //val backgroundJob = GlobalScope.launch(Dispatchers.Default){
+                            event.commands2.invoke(_currentListOfWeathers.value,dao)
 
-                            withContext(Dispatchers.Main) {
+                            /*withContext(Dispatchers.Main) {
 
                                     dao.upsertWeather(
                                         Weather(
@@ -124,9 +124,9 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                                             longitude = _currentListOfWeathers.value.longitude!!
                                         )
                                     )
-                                }
+                                }*/
 
-                        }
+                        //}
 
                     }
                     false ->{

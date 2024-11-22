@@ -1,11 +1,12 @@
 package com.example.labb2.networkmanager
 
 
+import com.example.labb2.model.Weather
 import com.example.labb2.model.WeatherState
+import com.example.labb2.model.WeathersConverter
 import com.example.labb2.model.WeathersState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -34,7 +35,38 @@ class RetrofitImp:NetworkService {
 
     }
 
-    fun runService(localWeathersState: WeathersState) = GlobalScope.launch(Dispatchers.Default) {
+    fun runService(
+        //localWeathersState: WeathersState,dao:WeatherDao
+        value:RunnableService.RetrofitRunner
+    ) = GlobalScope.launch(Dispatchers.Default) {
+
+
+        when(value.typeOfNetworkService){
+            TypeOfNetworkService.GETEXTERNALJSON ->{
+
+            }
+
+            TypeOfNetworkService.MACEOTESTJSON ->{
+                runMaceoService(value.localWeathersState)
+            }
+        }
+
+
+        withContext(Dispatchers.Main) {
+           //println(localWeathersState)
+            value.dao.upsertWeather(
+                Weather(
+                    weathers = WeathersConverter().weathersToString(value.localWeathersState),
+                    approvedTime = value.localWeathersState.approvedTime,
+                    latitude = value.localWeathersState.latitude!!,
+                    longitude = value.localWeathersState.longitude!!
+                )
+            )
+        }
+
+    }
+
+    private fun runMaceoService(localWeathersState: WeathersState){
         // Define the URL of the RESTful API you want to call
         val jsonPlaceholderService =
             RetrofitClient.retrofit.create(JsonPlaceholderService::class.java)
@@ -76,11 +108,6 @@ class RetrofitImp:NetworkService {
         catch (t: Throwable){
             println("Error: ${t.message}")
         }
-
-        withContext(Dispatchers.Main) {
-            println(localWeathersState)
-        }
-
     }
 
     data class TheTestWeather(val approvedTime:String, val timeSeries:List<Time_Series2>)
