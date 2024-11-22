@@ -79,8 +79,6 @@ fun LandscapeLayout(
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("14.333") }
     var lat by remember { mutableStateOf("60.383") }
-    //var latitude = -1f
-    //var longitude = -1f
     val weatherLists = vm.currentListOfWeathers.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
@@ -110,7 +108,7 @@ fun LandscapeLayout(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = stringResource(R.string.weather_forecast),//"Weather Forecast",
+                        text = stringResource(R.string.weather_forecast),
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -118,7 +116,7 @@ fun LandscapeLayout(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = stringResource(R.string.location_lon_lat,lon,lat),//"Location: $lon, $lat",
+                        text = stringResource(R.string.location_lon_lat, lon, lat),
                         fontSize = 24.sp
                     )
 
@@ -131,7 +129,7 @@ fun LandscapeLayout(
                             .height(100.dp)
                     ) {
                         items(weatherLists.value.weathers.size) { index ->
-                            var weatherType : String
+                            var weatherType: String
                             var date = ""
                             var time = ""
                             var temperature = -1f
@@ -214,7 +212,7 @@ fun LandscapeLayout(
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.Celsius,temperature),//"$temperature C",
+                                        text = stringResource(R.string.Celsius, temperature),
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -243,7 +241,7 @@ fun LandscapeLayout(
                                     onValueChange = { lon = it },
                                     label = {
                                         Text(
-                                            text = stringResource(R.string.Longitude),//"Longitude",
+                                            text = stringResource(R.string.Longitude),
                                             style = TextStyle(
                                                 fontSize = 20.sp,
                                                 fontWeight = FontWeight.Medium
@@ -278,7 +276,7 @@ fun LandscapeLayout(
                                     onValueChange = { lon = it },
                                     label = {
                                         Text(
-                                            text = stringResource(R.string.Latitude),//"Latitude",
+                                            text = stringResource(R.string.Latitude),
                                             style = TextStyle(
                                                 fontSize = 20.sp,
                                                 fontWeight = FontWeight.Medium
@@ -319,7 +317,7 @@ fun LandscapeLayout(
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
-                                    text = stringResource(R.string.Load),//"Load",
+                                    text = stringResource(R.string.Load),
                                     fontSize = 20.sp,
                                     color = Color.Black
                                 )
@@ -327,10 +325,6 @@ fun LandscapeLayout(
                             Spacer(modifier = Modifier.width(64.dp))
                             Button(
                                 onClick = {
-                                    //vm.setLongitude(lon.toFloat())
-                                    //vm.setLatitude(lat.toFloat())
-                                    //latitude = lat.toFloat()
-                                    //longitude = lon.toFloat()
                                     onEvent(
                                         WeatherEvent.SetCoordinates(
                                             lat.toFloat(),
@@ -346,7 +340,7 @@ fun LandscapeLayout(
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
-                                    text = stringResource(R.string.Set),//"Set",
+                                    text = stringResource(R.string.Set),
                                     fontSize = 20.sp,
                                     color = Color.Black
                                 )
@@ -366,8 +360,6 @@ fun PortraitLayout(
 ) {
     val weatherLists by vm.currentListOfWeathers.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
-    var latitude = -1f
-    var longitude = -1f
     var lon by remember { mutableStateOf("") }
     var lat by remember { mutableStateOf("") }
 
@@ -397,55 +389,55 @@ fun PortraitLayout(
                 ) {
                     Spacer(modifier = Modifier.height(56.dp))
                     Text(
-                        text = stringResource(R.string.weather_forecast),//"Weather Forecast",
+                        text = stringResource(R.string.weather_forecast),
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = stringResource(R.string.location_lon_lat,lon,lat),//"Location: $lon, $lat",
+                        text = stringResource(R.string.location_lon_lat, lon, lat),
                         fontSize = 24.sp
                     )
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    LazyColumn {
-                        items(weatherLists.weathers.size) { index ->
-                            //var weatherType: String
-                            //var date = ""
-                            //var time = ""
-                            //var temperature = -1f
-                            //var icon = R.drawable.sun
-                            var weatherType : String
-                            var date = ""
-                            var time = ""
-                            var temperature = -1f
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(350.dp)
+                    ) {
+                        items(5) { index -> //weatherLists.weathers.size
+                            val weatherType = "type"
+                            val date = "date"
+                            val time = "time"
+                            val temperature = 1f
                             var icon = R.drawable.sun
 
-                            LaunchedEffect(weatherLists) {
-                                weatherType = weatherLists.weathers[index].weatherIcon
-                                date = weatherLists.weathers[index].weatherDate
-                                time = weatherLists.approvedTime
-                                temperature = weatherLists.weathers[index].temperature
-
-                                when (weatherType) {
-                                    "1" -> icon = R.drawable.sun //clear skies
-                                    "2" -> icon = R.drawable.cloud //partly cloudy
-                                    "3" -> icon = R.drawable.cloud //cloudy
-                                    "4" -> icon = R.drawable.overcast //overcast
-                                    "5" -> icon = R.drawable.fog //fog
-                                    "6" -> icon = R.drawable.rain //rain showers
-                                    "7" -> icon = R.drawable.snow //snow showers
-                                    "8" -> icon = R.drawable.thunder
-                                    "9" -> icon = R.drawable.rain //rain
-                                    "10" -> icon = R.drawable.snow //snow
-                                    "11" -> icon = R.drawable.rain//freezing rain
-                                    "12" -> icon = R.drawable.rain //drizzle
-                                    "13" -> icon = R.drawable.rain//freezing drizzle
-                                    "14" -> icon = R.drawable.thunder //thunder with rain
-                                    "15" -> icon = R.drawable.thunder //thunder with snow
-                                    else -> icon = R.drawable.sun
-                                }
+                            if (weatherLists.weathers.size > 0){
+                                val weatherType = weatherLists.weathers[index].weatherIcon
+                                val date = weatherLists.weathers[index].weatherDate
+                                val time = weatherLists.approvedTime
+                                val temperature = weatherLists.weathers[index].temperature
                             }
+
+                            when (weatherType) {
+                                "1" -> icon = R.drawable.sun //clear skies
+                                "2" -> icon = R.drawable.cloud //partly cloudy
+                                "3" -> icon = R.drawable.cloud //cloudy
+                                "4" -> icon = R.drawable.overcast //overcast
+                                "5" -> icon = R.drawable.fog //fog
+                                "6" -> icon = R.drawable.rain //rain showers
+                                "7" -> icon = R.drawable.snow //snow showers
+                                "8" -> icon = R.drawable.thunder
+                                "9" -> icon = R.drawable.rain //rain
+                                "10" -> icon = R.drawable.snow //snow
+                                "11" -> icon = R.drawable.rain//freezing rain
+                                "12" -> icon = R.drawable.rain //drizzle
+                                "13" -> icon = R.drawable.rain//freezing drizzle
+                                "14" -> icon = R.drawable.thunder //thunder with rain
+                                "15" -> icon = R.drawable.thunder //thunder with snow
+                                else -> icon = R.drawable.sun
+                            }
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -497,7 +489,7 @@ fun PortraitLayout(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = stringResource(R.string.Celsius,temperature),//"$temperature C",
+                                        text = stringResource(R.string.Celsius, temperature),
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -512,7 +504,7 @@ fun PortraitLayout(
                             onValueChange = { lon = it },
                             label = {
                                 Text(
-                                    text = stringResource(R.string.Longitude),//"Longitude",
+                                    text = stringResource(R.string.Longitude),
                                     style = TextStyle(
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
@@ -541,7 +533,7 @@ fun PortraitLayout(
                             onValueChange = { lat = it },
                             label = {
                                 Text(
-                                    text = stringResource(R.string.Latitude),//"Latitude",
+                                    text = stringResource(R.string.Latitude),
                                     style = TextStyle(
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
@@ -587,10 +579,6 @@ fun PortraitLayout(
                         }
                         Button(
                             onClick = {
-                                //vm.setLongitude(lon.toFloat())
-                                //vm.setLatitude(lat.toFloat())
-                                latitude = lat.toFloat()
-                                longitude = lon.toFloat()
                                 onEvent(
                                     WeatherEvent.SetCoordinates(
                                         lat.toFloat(),
@@ -606,7 +594,7 @@ fun PortraitLayout(
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                         ) {
                             Text(
-                                text = stringResource(R.string.Set),//"Set",
+                                text = stringResource(R.string.Set),
                                 fontSize = 20.sp,
                                 color = Color.Black
                             )
