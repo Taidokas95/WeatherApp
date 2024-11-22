@@ -34,7 +34,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,16 +51,15 @@ import androidx.compose.ui.unit.sp
 import com.example.labb2.R
 import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
-import com.example.labb2.viewmodel.WeatherViewModel
+import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.viewmodel.WeatherViewModel2
-import com.example.labb2.viewmodel.WeatherViewModelInterface
 
 data class WeatherInfo(val date: String, val time: String, val type: String, val degrees: String)
 
 @Composable
 fun MainScreen(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Unit
+    commands2: (WeathersState, WeatherDao) -> Unit
 ) {
     val orientation = LocalConfiguration.current.orientation
 
@@ -75,7 +73,7 @@ fun MainScreen(
 @Composable
 fun LandscapeLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Unit
+    commands2: (WeathersState, WeatherDao) -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("14.333") }
@@ -359,7 +357,7 @@ fun LandscapeLayout(
 @Composable
 fun PortraitLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Unit
+    commands2: (WeathersState, WeatherDao) -> Unit
 ) {
     val weatherLists by vm.currentListOfWeathers.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
