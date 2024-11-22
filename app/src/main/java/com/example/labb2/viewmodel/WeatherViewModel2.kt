@@ -25,7 +25,11 @@ interface WeatherViewModelInterface2 {
 
     val currentListOfWeathers:StateFlow<WeathersState>
 
+    val currentTime:StateFlow<Long>
+
     fun onEvent(event: WeatherEvent)
+
+    fun updateTime():Boolean
 }
 
 class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,ViewModel() {
@@ -33,6 +37,20 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
     private val _currentListOfWeathers = MutableStateFlow(WeathersState())
     override val currentListOfWeathers: StateFlow<WeathersState>
         get() = _currentListOfWeathers.asStateFlow()
+
+    private val _currentTime = MutableStateFlow(System.currentTimeMillis())
+    override val currentTime: StateFlow<Long>
+        get() = _currentTime
+
+
+    override fun updateTime(): Boolean {
+        if( System.currentTimeMillis() >= (_currentTime.value + 5000L)){
+            _currentTime.value = System.currentTimeMillis()
+            return true
+        }
+        _currentTime.value = System.currentTimeMillis()
+        return false
+    }
 
    // private val networkManager = NetworkManager.createNetworkManager()
 
@@ -84,7 +102,7 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                     _currentListOfWeathers.value.longitude = event.longitude
 
                     println("latitude = ${event.latitude}")
-                    println("longitud = ${event.longitude}")
+                    println("longitude = ${event.longitude}")
 
                     //val x = dao.getWeathers()
 
@@ -113,7 +131,11 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                 _currentListOfWeathers.value.longitude = event.longitude
 
                 when(event.commands.invoke()){
-                    true -> { event.commands2.invoke(_currentListOfWeathers.value,dao) }
+                    true -> {
+                        if(updateTime())
+                            event.commands2.invoke(_currentListOfWeathers.value,dao)
+                        else println("TOO Fast")
+                    }
                     false ->{
                         val backgroundJob = GlobalScope.launch(Dispatchers.Default){
                             val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!.toString(),
