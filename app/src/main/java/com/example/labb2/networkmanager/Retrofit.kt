@@ -13,6 +13,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -43,7 +44,7 @@ class RetrofitImp:NetworkService {
 
         when(value.typeOfNetworkService){
             TypeOfNetworkService.GETEXTERNALJSON ->{
-
+                runSMHIService(value.localWeathersState)
             }
 
             TypeOfNetworkService.MACEOTESTJSON ->{
@@ -63,6 +64,55 @@ class RetrofitImp:NetworkService {
             )
         }
 
+    }
+
+    private fun runSMHIService(localWeathersState: WeathersState){
+        // Define the URL of the RESTful API you want to call
+        val jsonPlaceholderService =
+            //RetrofitClient.retrofit.create(JsonPlaceholderService::class.java)
+            RetrofitClient.createRetrofit("https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/").create(JsonPlaceholderService::class.java)
+
+        // Make the API call to retrieve the post with ID 1
+        //val call: Call<TheTestWeather> = jsonPlaceholderService.getWeather("lon/14.333/lat/60.383")
+        val call: Call<TheTestWeather> = jsonPlaceholderService.getWeather2(
+            localWeathersState.longitude.toString(),localWeathersState.latitude.toString()
+            //"lon/${localWeathersState.longitude.toString()}/lat/${localWeathersState.latitude.toString()}"
+        )
+
+        //localWeathersState.latitude = 60.383f
+        //localWeathersState.longitude = 14.343f
+
+        val response = call.execute()
+
+        try {
+            if(response.isSuccessful){
+                val post = response.body()
+
+                if(post!=null){
+                    println(post.approvedTime)
+                    localWeathersState.approvedTime = post.approvedTime//post.approvedTime
+
+                    for(timeSeries in post.timeSeries){
+                        println("size of parameters = ${timeSeries.parameters.size}")
+                        println("valid time = ${timeSeries.validTime}")
+                        var temperature:Float = -1f
+                        var icon = ""
+                        for(parameters in timeSeries.parameters){
+                            if(parameters.name == "t") temperature = parameters.values[0]
+                            else if(parameters.name == "Wsymb2") icon = parameters.values[0].toString()
+                        }
+                        localWeathersState.weathers.add(
+                            WeatherState(timeSeries.validTime, icon, temperature)
+                        )
+                    }
+
+                }
+
+            }
+        }
+        catch (t: Throwable){
+            println("Error: ${t.message}")
+        }
     }
 
     private fun runMaceoService(localWeathersState: WeathersState){
@@ -118,6 +168,9 @@ class RetrofitImp:NetworkService {
     interface JsonPlaceholderService {
         @GET("/weather/forecast")
         fun getWeather(@Query("lonLat") lonLat:String):Call<TheTestWeather>
+
+        @GET("lon/{lonId}/lat/{latId}/data.json")
+        fun getWeather2(@Path("lonId") lonId: String, @Path("latId") latId:String):Call<TheTestWeather>
     }
 
     object RetrofitClient {
@@ -125,6 +178,11 @@ class RetrofitImp:NetworkService {
 
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        fun createRetrofit(baseUrl:String) = Retrofit.Builder()
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
