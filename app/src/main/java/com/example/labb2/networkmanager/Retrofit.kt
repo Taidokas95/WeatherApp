@@ -57,8 +57,8 @@ class RetrofitImp:NetworkService {
                 Weather(
                     weathers = WeathersConverter().weathersToString(value.localWeathersState),
                     approvedTime = value.localWeathersState.approvedTime,
-                    latitude = value.localWeathersState.latitude!!,
-                    longitude = value.localWeathersState.longitude!!
+                    latitude = value.localWeathersState.latitude!!.toString(),
+                    longitude = value.localWeathersState.longitude!!.toString()
                 )
             )
         }

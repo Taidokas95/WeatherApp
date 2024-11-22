@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -78,8 +79,8 @@ fun LandscapeLayout(
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("14.333") }
     var lat by remember { mutableStateOf("60.383") }
-    var latitude = -1f
-    var longitude = -1f
+    //var latitude = -1f
+    //var longitude = -1f
     val weatherLists = vm.currentListOfWeathers.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
@@ -107,16 +108,20 @@ fun LandscapeLayout(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
-                        text = "Weather Forecast",
+                        text = stringResource(R.string.weather_forecast),//"Weather Forecast",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Medium
                     )
+
                     Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
-                        text = "Location: $lon, $lat",
+                        text = stringResource(R.string.location_lon_lat,lon,lat),//"Location: $lon, $lat",
                         fontSize = 24.sp
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     LazyColumn(
@@ -126,7 +131,7 @@ fun LandscapeLayout(
                             .height(100.dp)
                     ) {
                         items(weatherLists.value.weathers.size) { index ->
-                            var weatherType: String
+                            var weatherType : String
                             var date = ""
                             var time = ""
                             var temperature = -1f
@@ -209,7 +214,7 @@ fun LandscapeLayout(
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = "$temperature C",
+                                        text = stringResource(R.string.Celsius,temperature),//"$temperature C",
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -218,10 +223,10 @@ fun LandscapeLayout(
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
+
                     Spacer(modifier = Modifier.height(16.dp))
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
+
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth(),
@@ -238,7 +243,7 @@ fun LandscapeLayout(
                                     onValueChange = { lon = it },
                                     label = {
                                         Text(
-                                            text = "Longitude",
+                                            text = stringResource(R.string.Longitude),//"Longitude",
                                             style = TextStyle(
                                                 fontSize = 20.sp,
                                                 fontWeight = FontWeight.Medium
@@ -273,7 +278,7 @@ fun LandscapeLayout(
                                     onValueChange = { lon = it },
                                     label = {
                                         Text(
-                                            text = "Latitude",
+                                            text = stringResource(R.string.Latitude),//"Latitude",
                                             style = TextStyle(
                                                 fontSize = 20.sp,
                                                 fontWeight = FontWeight.Medium
@@ -306,7 +311,7 @@ fun LandscapeLayout(
                         ) {
                             Button(
                                 onClick = {
-                                    onEvent(WeatherEvent.LoadWeather(latitude, longitude))
+                                    onEvent(WeatherEvent.LoadWeather(lat.toFloat(), lon.toFloat()))
                                 },
                                 modifier = Modifier
                                     .size(100.dp, 60.dp)
@@ -314,7 +319,7 @@ fun LandscapeLayout(
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
-                                    text = "Load",
+                                    text = stringResource(R.string.Load),//"Load",
                                     fontSize = 20.sp,
                                     color = Color.Black
                                 )
@@ -324,12 +329,12 @@ fun LandscapeLayout(
                                 onClick = {
                                     //vm.setLongitude(lon.toFloat())
                                     //vm.setLatitude(lat.toFloat())
-                                    latitude = lat.toFloat()
-                                    longitude = lon.toFloat()
+                                    //latitude = lat.toFloat()
+                                    //longitude = lon.toFloat()
                                     onEvent(
                                         WeatherEvent.SetCoordinates(
-                                            latitude,
-                                            longitude,
+                                            lat.toFloat(),
+                                            lon.toFloat(),
                                             commands,
                                             commands2
                                         )
@@ -341,7 +346,7 @@ fun LandscapeLayout(
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
                                 Text(
-                                    text = "Set",
+                                    text = stringResource(R.string.Set),//"Set",
                                     fontSize = 20.sp,
                                     color = Color.Black
                                 )
@@ -392,20 +397,25 @@ fun PortraitLayout(
                 ) {
                     Spacer(modifier = Modifier.height(56.dp))
                     Text(
-                        text = "Weather Forecast",
+                        text = stringResource(R.string.weather_forecast),//"Weather Forecast",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Location: $lon, $lat",
+                        text = stringResource(R.string.location_lon_lat,lon,lat),//"Location: $lon, $lat",
                         fontSize = 24.sp
                     )
                     Spacer(modifier = Modifier.height(32.dp))
 
                     LazyColumn {
                         items(weatherLists.weathers.size) { index ->
-                            var weatherType: String
+                            //var weatherType: String
+                            //var date = ""
+                            //var time = ""
+                            //var temperature = -1f
+                            //var icon = R.drawable.sun
+                            var weatherType : String
                             var date = ""
                             var time = ""
                             var temperature = -1f
@@ -487,7 +497,7 @@ fun PortraitLayout(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = "$temperature C",
+                                        text = stringResource(R.string.Celsius,temperature),//"$temperature C",
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -502,7 +512,7 @@ fun PortraitLayout(
                             onValueChange = { lon = it },
                             label = {
                                 Text(
-                                    text = "Longitude",
+                                    text = stringResource(R.string.Longitude),//"Longitude",
                                     style = TextStyle(
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
@@ -531,7 +541,7 @@ fun PortraitLayout(
                             onValueChange = { lat = it },
                             label = {
                                 Text(
-                                    text = "Latitude",
+                                    text = stringResource(R.string.Latitude),//"Latitude",
                                     style = TextStyle(
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
@@ -562,7 +572,7 @@ fun PortraitLayout(
                     ) {
                         Button(
                             onClick = {
-                                onEvent(WeatherEvent.LoadWeather(latitude, longitude))
+                                onEvent(WeatherEvent.LoadWeather(lat.toFloat(), lon.toFloat()))
                             },
                             modifier = Modifier
                                 .size(100.dp, 60.dp)
@@ -570,7 +580,7 @@ fun PortraitLayout(
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                         ) {
                             Text(
-                                text = "Load",
+                                text = stringResource(R.string.Load),//"Load",
                                 fontSize = 20.sp,
                                 color = Color.Black
                             )
@@ -596,7 +606,7 @@ fun PortraitLayout(
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                         ) {
                             Text(
-                                text = "Set",
+                                text = stringResource(R.string.Set),//"Set",
                                 fontSize = 20.sp,
                                 color = Color.Black
                             )

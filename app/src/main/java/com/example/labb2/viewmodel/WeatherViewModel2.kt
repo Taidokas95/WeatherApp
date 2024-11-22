@@ -1,7 +1,6 @@
 package com.example.labb2.viewmodel
 
 //import com.example.testlab1_2.myexternalresource.databasemymanager.interfaces.WeatherDao
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,8 +13,6 @@ import com.example.labb2.model.WeathersState
 //import com.example.labb2.networkmanager.getWeathersFromDatabase
 import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.model.interfaces.WeatherEvent
-import com.example.labb2.networkmanager.NetworkManager
-import com.example.labb2.networkmanager.RunnableService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,8 +69,8 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                         Weather(
                             weathers = WeathersConverter().weathersToString(_currentListOfWeathers.value),
                             approvedTime = _currentListOfWeathers.value.approvedTime,
-                            latitude = _currentListOfWeathers.value.latitude!!,
-                            longitude = _currentListOfWeathers.value.longitude!!
+                            latitude = _currentListOfWeathers.value.latitude!!.toString(),
+                            longitude = _currentListOfWeathers.value.longitude!!.toString()
                         )
                     )
                 }
@@ -83,12 +80,15 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                 val backgroundJob = GlobalScope.launch(Dispatchers.Default) {
                     // Code to be executed on the background thread
 
-                    //_currentListOfWeathers.value.latitude = event.latitude
-                    //_currentListOfWeathers.value.longitude = event.longitude
+                    _currentListOfWeathers.value.latitude = event.latitude
+                    _currentListOfWeathers.value.longitude = event.longitude
+
+                    println("latitude = ${event.latitude}")
+                    println("longitud = ${event.longitude}")
 
                     //val x = dao.getWeathers()
 
-                    val x = dao.getWeathersFromCoordinates(event.latitude, event.longitude)
+                    val x = dao.getWeathersFromCoordinates(event.latitude.toString(), event.longitude.toString())
                     println(x)
                     val y = WeathersConverter().stringToWeather(x.weathers)
 
@@ -116,7 +116,9 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                     true -> { event.commands2.invoke(_currentListOfWeathers.value,dao) }
                     false ->{
                         val backgroundJob = GlobalScope.launch(Dispatchers.Default){
-                            val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!, _currentListOfWeathers.value.longitude!!)
+                            val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!.toString(),
+                                _currentListOfWeathers.value.longitude!!.toString()
+                            )
                             val y = WeathersConverter().stringToWeather(x.weathers)
                         }
                     }

@@ -34,6 +34,7 @@ import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
 import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.viewmodel.WeatherViewModel2
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

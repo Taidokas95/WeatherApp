@@ -1,7 +1,6 @@
 package com.example.labb2.model
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
@@ -10,8 +9,8 @@ import androidx.room.TypeConverters
 data class Weather(
     @TypeConverters(WeathersConverter::class) val weathers: String,
     val approvedTime:String,
-    val latitude:Float,
-    val longitude:Float
+    val latitude:String,
+    val longitude:String
 )
 
 class WeathersConverter{
