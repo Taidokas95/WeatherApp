@@ -29,10 +29,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,6 +80,8 @@ fun LandscapeLayout(
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("14.333") }
     var lat by remember { mutableStateOf("60.383") }
+    var latitude = -1f
+    var longitude = -1f
     val weatherLists = vm.currentListOfWeathers.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
@@ -124,26 +128,38 @@ fun LandscapeLayout(
                             .height(100.dp)
                     ) {
                         items(weatherLists.value.weathers.size) { index ->
-                            var weatherType = weatherLists.value.weathers[index].weatherIcon
+                            var weatherType: String
+                            var date = ""
+                            var time = ""
+                            var temperature = -1f
                             var icon = R.drawable.sun
-                            when (weatherType) {
-                                "1" -> icon = R.drawable.sun //clear skies
-                                "2" -> icon = R.drawable.cloud //partly cloudy
-                                "3" -> icon = R.drawable.cloud //cloudy
-                                "4" -> icon = R.drawable.overcast //overcast
-                                "5" -> icon = R.drawable.fog //fog
-                                "6" -> icon = R.drawable.rain //rain showers
-                                "7" -> icon = R.drawable.snow //snow showers
-                                "8" -> icon = R.drawable.thunder
-                                "9" -> icon = R.drawable.rain //rain
-                                "10" -> icon = R.drawable.snow //snow
-                                "11" -> icon = R.drawable.rain//freezing rain
-                                "12" -> icon = R.drawable.rain //drizzle
-                                "13" -> icon = R.drawable.rain//freezing drizzle
-                                "14" -> icon = R.drawable.thunder //thunder with rain
-                                "15" -> icon = R.drawable.thunder //thunder with snow
-                                else -> icon = R.drawable.sun
+
+                            LaunchedEffect(weatherLists) {
+                                weatherType = weatherLists.value.weathers[index].weatherIcon
+                                date = weatherLists.value.weathers[index].weatherDate
+                                time = weatherLists.value.approvedTime
+                                temperature = weatherLists.value.weathers[index].temperature
+
+                                when (weatherType) {
+                                    "1" -> icon = R.drawable.sun //clear skies
+                                    "2" -> icon = R.drawable.cloud //partly cloudy
+                                    "3" -> icon = R.drawable.cloud //cloudy
+                                    "4" -> icon = R.drawable.overcast //overcast
+                                    "5" -> icon = R.drawable.fog //fog
+                                    "6" -> icon = R.drawable.rain //rain showers
+                                    "7" -> icon = R.drawable.snow //snow showers
+                                    "8" -> icon = R.drawable.thunder
+                                    "9" -> icon = R.drawable.rain //rain
+                                    "10" -> icon = R.drawable.snow //snow
+                                    "11" -> icon = R.drawable.rain//freezing rain
+                                    "12" -> icon = R.drawable.rain //drizzle
+                                    "13" -> icon = R.drawable.rain//freezing drizzle
+                                    "14" -> icon = R.drawable.thunder //thunder with rain
+                                    "15" -> icon = R.drawable.thunder //thunder with snow
+                                    else -> icon = R.drawable.sun
+                                }
                             }
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -169,7 +185,7 @@ fun LandscapeLayout(
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherLists.value.weathers[index].weatherDate,
+                                        text = date,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -182,7 +198,7 @@ fun LandscapeLayout(
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherLists.value.approvedTime,
+                                        text = time,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -195,7 +211,7 @@ fun LandscapeLayout(
                                         .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                 ) {
                                     Text(
-                                        text = weatherLists.value.weathers[index].temperature.toString() + " C",
+                                        text = "$temperature C",
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -292,7 +308,7 @@ fun LandscapeLayout(
                         ) {
                             Button(
                                 onClick = {
-                                    onEvent(WeatherEvent.LoadWeather(lat.toFloat(), lon.toFloat()))
+                                    onEvent(WeatherEvent.LoadWeather(latitude, longitude))
                                 },
                                 modifier = Modifier
                                     .size(100.dp, 60.dp)
@@ -310,10 +326,12 @@ fun LandscapeLayout(
                                 onClick = {
                                     //vm.setLongitude(lon.toFloat())
                                     //vm.setLatitude(lat.toFloat())
+                                    latitude = lat.toFloat()
+                                    longitude = lon.toFloat()
                                     onEvent(
                                         WeatherEvent.SetCoordinates(
-                                            lat.toFloat(),
-                                            lon.toFloat(),
+                                            latitude,
+                                            longitude,
                                             commands,
                                             commands2
                                         )
@@ -345,8 +363,10 @@ fun PortraitLayout(
 ) {
     val weatherLists by vm.currentListOfWeathers.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
-    var lon by remember { mutableStateOf("14.333") }
-    var lat by remember { mutableStateOf("60.383") }
+    var latitude = -1f
+    var longitude = -1f
+    var lon by remember { mutableStateOf("") }
+    var lat by remember { mutableStateOf("") }
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -387,25 +407,36 @@ fun PortraitLayout(
 
                     LazyColumn {
                         items(weatherLists.weathers.size) { index ->
-                            var weatherType = weatherLists.weathers[index].weatherIcon
+                            var weatherType: String
+                            var date = ""
+                            var time = ""
+                            var temperature = -1f
                             var icon = R.drawable.sun
-                            when (weatherType) {
-                                "1" -> icon = R.drawable.sun //clear skies
-                                "2" -> icon = R.drawable.cloud //partly cloudy
-                                "3" -> icon = R.drawable.cloud //cloudy
-                                "4" -> icon = R.drawable.overcast //overcast
-                                "5" -> icon = R.drawable.fog //fog
-                                "6" -> icon = R.drawable.rain //rain showers
-                                "7" -> icon = R.drawable.snow //snow showers
-                                "8" -> icon = R.drawable.thunder
-                                "9" -> icon = R.drawable.rain //rain
-                                "10" -> icon = R.drawable.snow //snow
-                                "11" -> icon = R.drawable.rain//freezing rain
-                                "12" -> icon = R.drawable.rain //drizzle
-                                "13" -> icon = R.drawable.rain//freezing drizzle
-                                "14" -> icon = R.drawable.thunder //thunder with rain
-                                "15" -> icon = R.drawable.thunder //thunder with snow
-                                else -> icon = R.drawable.sun
+
+                            LaunchedEffect(weatherLists) {
+                                weatherType = weatherLists.weathers[index].weatherIcon
+                                date = weatherLists.weathers[index].weatherDate
+                                time = weatherLists.approvedTime
+                                temperature = weatherLists.weathers[index].temperature
+
+                                when (weatherType) {
+                                    "1" -> icon = R.drawable.sun //clear skies
+                                    "2" -> icon = R.drawable.cloud //partly cloudy
+                                    "3" -> icon = R.drawable.cloud //cloudy
+                                    "4" -> icon = R.drawable.overcast //overcast
+                                    "5" -> icon = R.drawable.fog //fog
+                                    "6" -> icon = R.drawable.rain //rain showers
+                                    "7" -> icon = R.drawable.snow //snow showers
+                                    "8" -> icon = R.drawable.thunder
+                                    "9" -> icon = R.drawable.rain //rain
+                                    "10" -> icon = R.drawable.snow //snow
+                                    "11" -> icon = R.drawable.rain//freezing rain
+                                    "12" -> icon = R.drawable.rain //drizzle
+                                    "13" -> icon = R.drawable.rain//freezing drizzle
+                                    "14" -> icon = R.drawable.thunder //thunder with rain
+                                    "15" -> icon = R.drawable.thunder //thunder with snow
+                                    else -> icon = R.drawable.sun
+                                }
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -432,7 +463,7 @@ fun PortraitLayout(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = weatherLists.weathers[index].weatherDate,
+                                        text = date,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -445,7 +476,7 @@ fun PortraitLayout(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = weatherLists.approvedTime,
+                                        text = time,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -458,7 +489,7 @@ fun PortraitLayout(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = weatherLists.weathers[index].temperature.toString() + " C",
+                                        text = "$temperature C",
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -499,7 +530,7 @@ fun PortraitLayout(
                         Spacer(modifier = Modifier.height(4.dp))
                         TextField(
                             value = lat,
-                            onValueChange = { lon = it },
+                            onValueChange = { lat = it },
                             label = {
                                 Text(
                                     text = "Latitude",
@@ -533,7 +564,7 @@ fun PortraitLayout(
                     ) {
                         Button(
                             onClick = {
-                                onEvent(WeatherEvent.LoadWeather(lat.toFloat(), lon.toFloat()))
+                                onEvent(WeatherEvent.LoadWeather(latitude, longitude))
                             },
                             modifier = Modifier
                                 .size(100.dp, 60.dp)
@@ -550,6 +581,8 @@ fun PortraitLayout(
                             onClick = {
                                 //vm.setLongitude(lon.toFloat())
                                 //vm.setLatitude(lat.toFloat())
+                                latitude = lat.toFloat()
+                                longitude = lon.toFloat()
                                 onEvent(
                                     WeatherEvent.SetCoordinates(
                                         lat.toFloat(),
