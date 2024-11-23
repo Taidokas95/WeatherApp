@@ -136,7 +136,7 @@ class RetrofitImp:NetworkService {
 
         val response = call.execute()
 
-            if(response.isSuccessful){
+        if(response.isSuccessful){
                 val post = response.body()
 
                 if(post!=null){
