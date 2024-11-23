@@ -1,6 +1,7 @@
 package com.example.labb2.networkmanager
 
 
+import com.example.labb2.Test.ThePost
 import com.example.labb2.model.Weather
 import com.example.labb2.model.WeatherState
 import com.example.labb2.model.WeathersConverter
@@ -10,6 +11,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -39,30 +42,32 @@ class RetrofitImp:NetworkService {
     fun runService(
         //localWeathersState: WeathersState,dao:WeatherDao
         value:RunnableService.RetrofitRunner
-    ) = GlobalScope.launch(Dispatchers.Default) {
+    ) { //= GlobalScope.launch(Dispatchers.Default) {
 
 
-        when(value.typeOfNetworkService){
-            TypeOfNetworkService.GETEXTERNALJSON ->{
+        when (value.typeOfNetworkService) {
+            TypeOfNetworkService.GETEXTERNALJSON -> {
                 runSMHIService(value.localWeathersState)
+
             }
 
-            TypeOfNetworkService.MACEOTESTJSON ->{
+            TypeOfNetworkService.MACEOTESTJSON -> {
                 runMaceoService(value.localWeathersState)
             }
         }
 
 
-        withContext(Dispatchers.Main) {
-            value.dao.upsertWeather(
-                Weather(
-                    weathers = WeathersConverter().weathersToString(value.localWeathersState),
-                    approvedTime = value.localWeathersState.approvedTime,
-                    latitude = value.localWeathersState.latitude!!.toString(),
-                    longitude = value.localWeathersState.longitude!!.toString()
-                )
+        //withContext(Dispatchers.Main) {
+     /*   value.dao.upsertWeather(
+            Weather(
+                weathers = WeathersConverter().weathersToString(value.localWeathersState),
+                approvedTime = value.localWeathersState.approvedTime,
+                latitude = value.localWeathersState.latitude!!.toString(),
+                longitude = value.localWeathersState.longitude!!.toString()
             )
-        }
+        )*/
+        //}
+    }
 
     }
 
@@ -82,10 +87,14 @@ class RetrofitImp:NetworkService {
         //localWeathersState.latitude = 60.383f
         //localWeathersState.longitude = 14.343f
 
+        println("Hello")
+
+
         val response = call.execute()
 
-        try {
-            if(response.isSuccessful){
+        println("")
+
+        if(response.isSuccessful){
                 val post = response.body()
 
                 if(post!=null){
@@ -106,13 +115,12 @@ class RetrofitImp:NetworkService {
                         )
                     }
 
+                }else {
+                    println("Error: ${response.code()}")
                 }
 
-            }
         }
-        catch (t: Throwable){
-            println("Error: ${t.message}")
-        }
+
     }
 
     private fun runMaceoService(localWeathersState: WeathersState){
@@ -128,7 +136,6 @@ class RetrofitImp:NetworkService {
 
         val response = call.execute()
 
-        try {
             if(response.isSuccessful){
                 val post = response.body()
 
@@ -152,11 +159,9 @@ class RetrofitImp:NetworkService {
 
                 }
 
+
             }
-        }
-        catch (t: Throwable){
-            println("Error: ${t.message}")
-        }
+
     }
 
     data class TheTestWeather(val approvedTime:String, val timeSeries:List<Time_Series2>)
@@ -188,7 +193,7 @@ class RetrofitImp:NetworkService {
     }
 
 
-}
+
 
 // Help structure for network
 data class ThePost(

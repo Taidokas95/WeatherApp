@@ -34,7 +34,6 @@ import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
 import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.viewmodel.WeatherViewModel2
-import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -43,7 +42,7 @@ fun WeatherScreen2(
     onEvent: (WeatherEvent) -> Unit,
     vm: WeatherViewModel2,
     commands: () -> Boolean,
-    commands2: (WeathersState,WeatherDao) -> Unit
+    commands2: (WeathersState) -> Unit
 ) {
 
     val weathers by vm.currentListOfWeathers.collectAsState()

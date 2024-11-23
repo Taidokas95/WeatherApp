@@ -68,10 +68,10 @@ class MainActivity3 : ComponentActivity() {
 
                     val x = {networkManager.isOnline(application)}
                     val y = {
-                        weathersState: WeathersState, dao: WeatherDao
+                        weathersState: WeathersState
                         -> networkManager
                             .runNetworkService(
-                                RunnableService.RetrofitRunner(weathersState,dao)
+                                RunnableService.RetrofitRunner(weathersState)
                             )
                     }
 
@@ -82,7 +82,7 @@ class MainActivity3 : ComponentActivity() {
                     MainScreen(
                         vm = weatherViewModel,
                         onEvent = weatherViewModel::onEvent,
-                        commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState, WeatherDao) -> Unit
+                        commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState) -> Unit
                     )
 
                     /*val config = resources.configuration

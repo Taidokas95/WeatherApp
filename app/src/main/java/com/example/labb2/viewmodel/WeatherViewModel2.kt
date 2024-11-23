@@ -27,9 +27,13 @@ interface WeatherViewModelInterface2 {
 
     val currentTime:StateFlow<Long>
 
+    val isUpdated:StateFlow<Boolean>
+
     fun onEvent(event: WeatherEvent)
 
     fun updateTime():Boolean
+
+    fun updateState(state:Boolean)
 }
 
 class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,ViewModel() {
@@ -42,6 +46,10 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
     override val currentTime: StateFlow<Long>
         get() = _currentTime
 
+    private val _isUpdated = MutableStateFlow(false)
+    override val isUpdated: StateFlow<Boolean>
+        get() = _isUpdated.asStateFlow()
+
 
     override fun updateTime(): Boolean {
         if( System.currentTimeMillis() >= (_currentTime.value + 5000L)){
@@ -52,7 +60,11 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
         return false
     }
 
-   // private val networkManager = NetworkManager.createNetworkManager()
+    override fun updateState(state: Boolean) {
+        _isUpdated.value = state
+    }
+
+    // private val networkManager = NetworkManager.createNetworkManager()
 
 
     companion object {
@@ -132,8 +144,24 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
 
                 when(event.commands.invoke()){
                     true -> {
-                        if(updateTime())
-                            event.commands2.invoke(_currentListOfWeathers.value,dao)
+                        if(updateTime()){
+                            val backgroundJob = GlobalScope.launch(Dispatchers.Default){
+                                event.commands2.invoke(_currentListOfWeathers.value)
+
+
+                                withContext(Dispatchers.Main) {
+                                   dao.upsertWeather(
+                                       Weather(
+                                           weathers = WeathersConverter().weathersToString(_currentListOfWeathers.value),
+                                           approvedTime = _currentListOfWeathers.value.approvedTime,
+                                           latitude = _currentListOfWeathers.value.latitude!!.toString(),
+                                           longitude = _currentListOfWeathers.value.longitude!!.toString()
+                                       )
+                                   )
+                                    updateState(true)
+                                }
+                            }
+                        }
                         else println("TOO Fast")
                     }
                     false ->{

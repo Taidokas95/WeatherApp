@@ -1,7 +1,6 @@
 package com.example.labb2.model.interfaces
 
 import com.example.labb2.model.WeathersState
-import com.example.labb2.roommanager.WeatherDao
 
 
 interface WeatherEvent {
@@ -12,7 +11,7 @@ interface WeatherEvent {
         val latitude: Float,
         val longitude: Float,
         val commands: () -> Boolean,
-        val commands2: (WeathersState, WeatherDao) -> Unit
+        val commands2: (WeathersState) -> Unit
     ): WeatherEvent
     //data class DeleteWeathers(val weather: Weather): WeatherEvent
 
