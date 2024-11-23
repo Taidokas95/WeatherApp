@@ -29,11 +29,16 @@ interface WeatherViewModelInterface2 {
 
     val isUpdated:StateFlow<Boolean>
 
+    val theRetrofitMessage:StateFlow<Pair<Boolean,String>>
+
     fun onEvent(event: WeatherEvent)
 
     fun updateTime():Boolean
 
     fun updateState(state:Boolean)
+
+    fun updateRetrofitMessage(state:Boolean, message:String)
+
 }
 
 class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,ViewModel() {
@@ -50,6 +55,10 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
     override val isUpdated: StateFlow<Boolean>
         get() = _isUpdated.asStateFlow()
 
+    private val _theRetrofitMessage =  MutableStateFlow(Pair(true,"Success"))
+    override val theRetrofitMessage: StateFlow<Pair<Boolean, String>>
+        get() = _theRetrofitMessage.asStateFlow()
+
 
     override fun updateTime(): Boolean {
         if( System.currentTimeMillis() >= (_currentTime.value + 5000L)){
@@ -62,6 +71,10 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
 
     override fun updateState(state: Boolean) {
         _isUpdated.value = state
+    }
+
+    override fun updateRetrofitMessage(state: Boolean, message:String) {
+        _theRetrofitMessage.value = Pair(state,message)
     }
 
     // private val networkManager = NetworkManager.createNetworkManager()
@@ -146,11 +159,12 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                     true -> {
                         if(updateTime()){
                             val backgroundJob = GlobalScope.launch(Dispatchers.Default){
-                                event.commands2.invoke(_currentListOfWeathers.value)
+                                val x = event.commands2.invoke(_currentListOfWeathers.value)
 
 
                                 withContext(Dispatchers.Main) {
-                                   dao.upsertWeather(
+                                    if(x.first){
+                                        dao.upsertWeather(
                                        Weather(
                                            weathers = WeathersConverter().weathersToString(_currentListOfWeathers.value),
                                            approvedTime = _currentListOfWeathers.value.approvedTime,
@@ -159,7 +173,13 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
                                        )
                                    )
                                     updateState(true)
+                                    }
+                                    else{
+                                        updateRetrofitMessage(x.first,x.second)
+                                        //_theRetrofitMessage.value = x
+                                    }
                                 }
+
                             }
                         }
                         else println("TOO Fast")

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import com.example.labb2.CustomExceptions.OutOfBoundsException
 
 class NetworkManager {
 
@@ -39,8 +40,14 @@ class NetworkManager {
             }
     }
 
-    fun runNetworkService(value: RunnableService.RetrofitRunner) {
-        retrofitImp!!.runService(value)
+    fun runNetworkService(value: RunnableService.RetrofitRunner): Pair<Boolean, String?> {
+        try {
+            retrofitImp!!.runService(value)
+            return Pair(true,"Success")
+        }catch(e: OutOfBoundsException){
+            println("Hello ${e.message}")
+           return Pair(false,e.message)
+        }
     }
 
 }

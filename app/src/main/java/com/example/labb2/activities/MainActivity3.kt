@@ -82,7 +82,7 @@ class MainActivity3 : ComponentActivity() {
                     MainScreen(
                         vm = weatherViewModel,
                         onEvent = weatherViewModel::onEvent,
-                        commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState) -> Unit
+                        commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState) -> Pair<Boolean,String>
                     )
 
                     /*val config = resources.configuration

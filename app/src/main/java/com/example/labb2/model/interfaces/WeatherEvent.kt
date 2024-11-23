@@ -11,7 +11,7 @@ interface WeatherEvent {
         val latitude: Float,
         val longitude: Float,
         val commands: () -> Boolean,
-        val commands2: (WeathersState) -> Unit
+        val commands2: (WeathersState) -> Pair<Boolean,String>
     ): WeatherEvent
     //data class DeleteWeathers(val weather: Weather): WeatherEvent
 

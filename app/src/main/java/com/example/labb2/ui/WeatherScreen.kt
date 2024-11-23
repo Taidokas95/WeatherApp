@@ -1,5 +1,6 @@
 package com.example.labb2.ui
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.labb2.CustomComposables.DrawIconFromIdComposable
+import com.example.labb2.CustomExceptions.OutOfBoundsException
 import com.example.labb2.CustomStringResourcesClass
 import com.example.labb2.R
 import com.example.labb2.model.WeathersState
@@ -64,7 +66,7 @@ data class WeatherInfo(val date: String, val time: String, val type: String, val
 @Composable
 fun MainScreen(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Unit
+    commands2: (WeathersState) -> Pair<Boolean,String>
 ) {
     val orientation = LocalConfiguration.current.orientation
 
@@ -75,10 +77,11 @@ fun MainScreen(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun LandscapeLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Unit
+    commands2: (WeathersState) -> Pair<Boolean,String>
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("14.333") }
@@ -95,6 +98,8 @@ fun LandscapeLayout(
     var icon = R.drawable.sun*/
 
     val isUpdated by vm.isUpdated.collectAsState()
+
+    val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -251,6 +256,16 @@ fun LandscapeLayout(
                         }
                     }
                     // TODO: END MARKER HERE
+
+                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Requested point is out of bounds"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true,"Success")
+                    }
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -323,19 +338,13 @@ fun LandscapeLayout(
                             Button(
                                 onClick = {
                                     try{
-                                    onEvent(WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2))
+                                        onEvent(
+                                            WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2)
+                                        )
                                     } catch (e:NumberFormatException){
                                         scope.launch {
                                             snackBarHostState.showSnackbar(
                                                 message = "Input not float"
-                                            )
-                                        }
-                                    }
-
-                                    catch(e:Exception){
-                                        scope.launch {
-                                            snackBarHostState.showSnackbar(
-                                                message = "Network Related problem: ${e.message}"
                                             )
                                         }
                                     }
@@ -354,10 +363,11 @@ fun LandscapeLayout(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun PortraitLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Unit
+    commands2: (WeathersState) -> Pair<Boolean,String>
 ) {
     val weatherLists by vm.currentListOfWeathers.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -373,6 +383,8 @@ fun PortraitLayout(
     var icon = R.drawable.sun*/
 
     val isUpdated by vm.isUpdated.collectAsState()
+
+    val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -519,6 +531,16 @@ fun PortraitLayout(
 
                         }
                     }
+
+                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Requested point is out of bounds"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true,"Success")
+                    }
+
                     Spacer(modifier = Modifier.height(64.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
                         TextField(
@@ -602,23 +624,15 @@ fun PortraitLayout(
                         Button(
                             onClick = {
                                 //onEvent(WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2))
-                                //try{
+                                try{
                                     onEvent(WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2))
-                                //} catch (e:NumberFormatException){
-                                /*    scope.launch {
+                                } catch (e:NumberFormatException){
+                                    scope.launch {
                                         snackBarHostState.showSnackbar(
                                             message = "Input not float"
                                         )
                                     }
-                                }*/
-
-                                /*catch(e:Exception){
-                                    scope.launch {
-                                        snackBarHostState.showSnackbar(
-                                            message = "Network Related problem: ${e.message}"
-                                        )
-                                    }
-                                }*/
+                                }
 
                             },
                             modifier = Modifier

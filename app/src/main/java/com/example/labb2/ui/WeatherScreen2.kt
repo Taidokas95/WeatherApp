@@ -42,7 +42,7 @@ fun WeatherScreen2(
     onEvent: (WeatherEvent) -> Unit,
     vm: WeatherViewModel2,
     commands: () -> Boolean,
-    commands2: (WeathersState) -> Unit
+    commands2: (WeathersState) -> Pair<Boolean,String>
 ) {
 
     val weathers by vm.currentListOfWeathers.collectAsState()

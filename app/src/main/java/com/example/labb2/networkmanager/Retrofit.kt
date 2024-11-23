@@ -1,6 +1,7 @@
 package com.example.labb2.networkmanager
 
 
+import com.example.labb2.CustomExceptions.OutOfBoundsException
 import com.example.labb2.Test.ThePost
 import com.example.labb2.model.Weather
 import com.example.labb2.model.WeatherState
@@ -91,8 +92,9 @@ class RetrofitImp:NetworkService {
 
 
         val response = call.execute()
+        println(response.code())
 
-        println("")
+        if(response.code()==404) throw OutOfBoundsException()
 
         if(response.isSuccessful){
                 val post = response.body()
