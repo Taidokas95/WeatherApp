@@ -338,7 +338,7 @@ fun LandscapeLayout(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Box(
-                                modifier = Modifier.height(64.dp).weight(1f)
+                                modifier = Modifier.height(70.dp).weight(1f)
                             )
                             {
                                 // Longitude text field
@@ -361,13 +361,13 @@ fun LandscapeLayout(
                                 )
                             }
                             Box(
-                                modifier = Modifier.height(64.dp).weight(1f)
+                                modifier = Modifier.height(70.dp).weight(1f)
                             )
                             {
                                 // Latitude text field
                                 TextField(
                                     value = lat,
-                                    onValueChange = { lon = it },
+                                    onValueChange = { lat = it },
                                     label = {
                                         Text(text = stringResource(R.string.Latitude), style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium))
                                     },
