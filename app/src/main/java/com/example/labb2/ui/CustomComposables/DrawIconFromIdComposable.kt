@@ -1,4 +1,4 @@
-package com.example.labb2.CustomComposables
+package com.example.labb2.ui.CustomComposables
 
 import androidx.compose.runtime.Composable
 import com.example.labb2.R

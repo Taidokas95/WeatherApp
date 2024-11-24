@@ -1,4 +1,4 @@
-package com.example.labb2.roommanager
+package com.example.labb2.externalresources.roommanager
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

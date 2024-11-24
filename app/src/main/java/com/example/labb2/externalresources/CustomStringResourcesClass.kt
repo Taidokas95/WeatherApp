@@ -1,4 +1,4 @@
-package com.example.labb2
+package com.example.labb2.externalresources
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

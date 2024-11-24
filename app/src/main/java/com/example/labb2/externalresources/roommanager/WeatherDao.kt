@@ -1,4 +1,4 @@
-package com.example.labb2.roommanager
+package com.example.labb2.externalresources.roommanager
 
 import androidx.room.Dao
 import androidx.room.Delete

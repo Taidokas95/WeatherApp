@@ -11,7 +11,7 @@ import com.example.labb2.model.Weather
 import com.example.labb2.model.WeathersConverter
 import com.example.labb2.model.WeathersState
 //import com.example.labb2.networkmanager.getWeathersFromDatabase
-import com.example.labb2.roommanager.WeatherDao
+import com.example.labb2.externalresources.roommanager.WeatherDao
 import com.example.labb2.model.interfaces.WeatherEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -182,14 +182,22 @@ class WeatherViewModel2(private val dao: WeatherDao):WeatherViewModelInterface2,
 
                             }
                         }
-                        else println("TOO Fast")
+                        else {
+                            updateRetrofitMessage(false,"Too fast")
+                        }
                     }
                     false ->{
                         val backgroundJob = GlobalScope.launch(Dispatchers.Default){
+                            updateRetrofitMessage(false,"No internet")
+                            try{
                             val x = dao.getWeathersFromCoordinates(_currentListOfWeathers.value.latitude!!.toString(),
                                 _currentListOfWeathers.value.longitude!!.toString()
                             )
                             val y = WeathersConverter().stringToWeather(x.weathers)
+                            _currentListOfWeathers.value = y
+                            } catch (e:NullPointerException){
+                                updateRetrofitMessage(false,"No content")
+                            }
                         }
                     }
                 }

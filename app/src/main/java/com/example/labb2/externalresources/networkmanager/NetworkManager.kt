@@ -1,19 +1,19 @@
-package com.example.labb2.networkmanager
+package com.example.labb2.externalresources.networkmanager
 
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.example.labb2.CustomExceptions.OutOfBoundsException
+import com.example.labb2.exceptions.OutOfBoundsException
 
 class NetworkManager {
 
 
     companion object{
-        private var retrofitImp:RetrofitImp? = null
-        private var networkManager:NetworkManager? = null
+        private var retrofitImp: RetrofitImp? = null
+        private var networkManager: NetworkManager? = null
 
-        fun createNetworkManager():NetworkManager{
+        fun createNetworkManager(): NetworkManager {
             if(networkManager == null) {
                 networkManager = NetworkManager()
                 retrofitImp = RetrofitImp.createRetroFitImp()

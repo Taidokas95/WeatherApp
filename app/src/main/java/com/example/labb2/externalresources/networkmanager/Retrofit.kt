@@ -1,19 +1,10 @@
-package com.example.labb2.networkmanager
+package com.example.labb2.externalresources.networkmanager
 
 
-import com.example.labb2.CustomExceptions.OutOfBoundsException
-import com.example.labb2.Test.ThePost
-import com.example.labb2.model.Weather
+import com.example.labb2.exceptions.OutOfBoundsException
 import com.example.labb2.model.WeatherState
-import com.example.labb2.model.WeathersConverter
 import com.example.labb2.model.WeathersState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -24,13 +15,13 @@ import retrofit2.http.Query
 const val link1 = "https://maceo.sth.kth.se/weather/forecast?lonLat=lon/14.333/lat/60.383"
 const val link2 = "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/16/lat/58/data.json"
 
-class RetrofitImp:NetworkService {
+class RetrofitImp: NetworkService {
 
     companion object{
-        private var retrofit:RetrofitImp? = null
-        private var retrofit2:RetrofitClient? = null
+        private var retrofit: RetrofitImp? = null
+        private var retrofit2: RetrofitClient? = null
 
-        fun createRetroFitImp():RetrofitImp{
+        fun createRetroFitImp(): RetrofitImp {
             if(retrofit == null) {
                 retrofit = RetrofitImp()
                 retrofit2 = RetrofitClient
@@ -42,7 +33,7 @@ class RetrofitImp:NetworkService {
 
     fun runService(
         //localWeathersState: WeathersState,dao:WeatherDao
-        value:RunnableService.RetrofitRunner
+        value: RunnableService.RetrofitRunner
     ) { //= GlobalScope.launch(Dispatchers.Default) {
 
 
@@ -76,7 +67,8 @@ class RetrofitImp:NetworkService {
         // Define the URL of the RESTful API you want to call
         val jsonPlaceholderService =
             //RetrofitClient.retrofit.create(JsonPlaceholderService::class.java)
-            RetrofitClient.createRetrofit("https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/").create(JsonPlaceholderService::class.java)
+            RetrofitClient.createRetrofit("https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/")
+                .create(JsonPlaceholderService::class.java)
 
         // Make the API call to retrieve the post with ID 1
         //val call: Call<TheTestWeather> = jsonPlaceholderService.getWeather("lon/14.333/lat/60.383")

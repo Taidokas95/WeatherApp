@@ -9,8 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
-import com.example.labb2.roommanager.WeatherDatabase
-import com.example.labb2.ui.MainScreen
+import com.example.labb2.externalresources.roommanager.WeatherDatabase
 import com.example.labb2.ui.theme.LabB2Theme
 import com.example.labb2.viewmodel.WeatherViewModel
 

@@ -17,11 +17,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 import androidx.room.Room
 import com.example.labb2.model.WeathersState
-import com.example.labb2.networkmanager.NetworkManager
-import com.example.labb2.networkmanager.RunnableService
-import com.example.labb2.roommanager.WeatherDao
-import com.example.labb2.roommanager.WeatherDatabase
-import com.example.labb2.ui.MainScreen
+import com.example.labb2.externalresources.networkmanager.NetworkManager
+import com.example.labb2.externalresources.networkmanager.RunnableService
+import com.example.labb2.externalresources.roommanager.WeatherDatabase
+import com.example.labb2.ui.screens.MainScreen
 import com.example.labb2.ui.theme.LabB2Theme
 import com.example.labb2.viewmodel.WeatherViewModel2
 

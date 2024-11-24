@@ -1,4 +1,4 @@
-package com.example.labb2.ui
+package com.example.labb2.ui.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
-import com.example.labb2.roommanager.WeatherDao
 import com.example.labb2.viewmodel.WeatherViewModel2
 
 

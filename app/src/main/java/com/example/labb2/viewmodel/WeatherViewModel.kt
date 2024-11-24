@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.labb2.model.WeathersState
-import com.example.labb2.roommanager.WeatherDao
+import com.example.labb2.externalresources.roommanager.WeatherDao
 import com.example.labb2.model.interfaces.WeatherEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

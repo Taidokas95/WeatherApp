@@ -1,4 +1,4 @@
-package com.example.labb2.ui
+package com.example.labb2.ui.screens
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
@@ -52,9 +52,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.labb2.CustomComposables.DrawIconFromIdComposable
-import com.example.labb2.CustomExceptions.OutOfBoundsException
-import com.example.labb2.CustomStringResourcesClass
+import com.example.labb2.ui.CustomComposables.DrawIconFromIdComposable
+import com.example.labb2.externalresources.CustomStringResourcesClass
 import com.example.labb2.R
 import com.example.labb2.model.WeathersState
 import com.example.labb2.model.interfaces.WeatherEvent
@@ -150,7 +149,34 @@ fun LandscapeLayout(
                         )
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    if(weatherLists.weathers.size > 0 || isUpdated) {
+                    if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = "Requested point is out of bounds"
+                        )
+                    }
+                    vm.updateRetrofitMessage(true,"Success")
+                }
+
+                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No internet"){
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "No internet connection"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true,"Success")
+                    }
+
+                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No content"){
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "No internet and no weather with such coordinates exists"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true,"Success")
+                    }
+
+                    else if(weatherLists.weathers.size > 0 || isUpdated) {
                         LazyColumn(
                             userScrollEnabled = true,
                             modifier = Modifier
@@ -256,15 +282,6 @@ fun LandscapeLayout(
                         }
                     }
                     // TODO: END MARKER HERE
-
-                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Requested point is out of bounds"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true,"Success")
-                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -421,8 +438,35 @@ fun PortraitLayout(
                         )
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = "Requested point is out of bounds"
+                        )
+                    }
+                    vm.updateRetrofitMessage(true,"Success")
+                }
 
-                    if(weatherLists.weathers.size > 0 || isUpdated){
+                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No internet"){
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "No internet connection"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true,"Success")
+                    }
+
+                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No content"){
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "No internet and no weather with such coordinates exists"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true,"Success")
+                    }
+
+
+                    else if(weatherLists.weathers.size > 0 || isUpdated){
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -530,15 +574,6 @@ fun PortraitLayout(
                         })
 
                         }
-                    }
-
-                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Requested point is out of bounds"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true,"Success")
                     }
 
                     Spacer(modifier = Modifier.height(64.dp))
