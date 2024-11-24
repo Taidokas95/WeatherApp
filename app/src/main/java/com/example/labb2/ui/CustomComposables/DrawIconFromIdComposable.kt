@@ -12,7 +12,7 @@ import com.example.labb2.R
  *
  */
 fun DrawIconFromIdComposable(weatherType: String): Int {
-    println("Current id = $weatherType")
+    //println("Current id = $weatherType")
     when (weatherType) {
         "1.0" -> return R.drawable.l1
         "2.0" -> return R.drawable.l2

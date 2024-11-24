@@ -130,6 +130,11 @@ fun LandscapeLayout(
                     )
                 )
         ) {
+
+            if(weatherLists.weathers.size > 0){
+                vm.updateState(true)
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -168,44 +173,8 @@ fun LandscapeLayout(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Present message when the specified coordinates are out of bounds
-                    if (!theRetrofitMessage.first && theRetrofitMessage.second == "404") {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Requested point is out of bounds"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true, "Success")
-                    } else if (!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast") {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Too fast"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true, "Success")
-                    }
-                    // Present message when there is no internet connection
-                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No internet") {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "No internet connection"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true, "Success")
-                    }
-
-                    // Present message when there is no weather report of a specified coordinate while there is no internet connection
-                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No content") {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "No internet and no weather with such coordinates exists"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true, "Success")
-                    }
-
                     // Present the current weather report as a scrollable list
-                    else if (weatherLists.weathers.size > 0 || isUpdated) {
+                    if (isUpdated) {
                         LazyColumn(
                             userScrollEnabled = true,
                             modifier = Modifier
@@ -214,7 +183,7 @@ fun LandscapeLayout(
                             state = rememberLazyListState()
                         ) {
 
-                            vm.updateState(false)
+                            //vm.updateState(false)
 
                             items(weatherLists.weathers.size, itemContent = { index ->
                                 Row(
@@ -271,6 +240,42 @@ fun LandscapeLayout(
                                 Spacer(modifier = Modifier.height(8.dp))
                             })
                         }
+                    }
+
+                    // Present message when the specified coordinates are out of bounds
+                    if (!theRetrofitMessage.first && theRetrofitMessage.second == "404") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Requested point is out of bounds"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
+                    } else if (!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Too fast"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
+                    }
+                    // Present message when there is no internet connection
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No internet") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "No internet connection"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
+                    }
+
+                    // Present message when there is no weather report of a specified coordinate while there is no internet connection
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No content") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "No internet and no weather with such coordinates exists"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -373,6 +378,9 @@ fun LandscapeLayout(
                             // The set button
                             Button(
                                 onClick = {
+
+                                    //vm.updateState(false)
+
                                     try {
                                         onEvent(
                                             WeatherEvent.SetCoordinates(
@@ -452,6 +460,11 @@ fun PortraitLayout(
                     )
                 )
         ) {
+
+            if(weatherLists.weathers.size > 0){
+                vm.updateState(true)
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -476,6 +489,7 @@ fun PortraitLayout(
                         fontSize = 24.sp
                     )
                     Spacer(modifier = Modifier.height(32.dp))
+
                     if (weatherLists.approvedTime != "")
                         Text(
                             text = CustomStringResourcesClass.parseDateToString(weatherLists.approvedTime),
@@ -484,45 +498,8 @@ fun PortraitLayout(
                         )
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // When the coordinates are out of bounds
-                    if (!theRetrofitMessage.first && theRetrofitMessage.second == "404") {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Requested point is out of bounds"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true, "Success")
-                    } else if (!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast") {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Too fast"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true, "Success")
-                    }
-
-                    // When there is no internet connection
-                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No internet") {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "No internet connection"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true, "Success")
-                    }
-
-                    // When there is no internet connection while
-                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No content") {
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "No internet and no weather with such coordinates exists"
-                            )
-                        }
-                        vm.updateRetrofitMessage(true, "Success")
-                    }
-
                     // Present weather report
-                    else if (weatherLists.weathers.size > 0 || isUpdated) {
+                    if (isUpdated) {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -530,9 +507,10 @@ fun PortraitLayout(
                             state = rememberLazyListState()
                         ) {
 
-                            vm.updateState(false)
+                            //vm.updateState(false)
 
                             items(
+
                                 weatherLists.weathers.size,
                                 itemContent = { index ->
                                     //println("Size of weather report = ${weatherLists.weathers.size}")
@@ -590,6 +568,45 @@ fun PortraitLayout(
                                 })
 
                         }
+                    }
+
+                    // When the coordinates are out of bounds
+                    if (!theRetrofitMessage.first && theRetrofitMessage.second == "404") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Requested point is out of bounds"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
+
+                    }
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Too fast"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
+                    }
+
+                    // When there is no internet connection
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No internet") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "No internet connection"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
+                    }
+
+                    // When there is no internet connection while
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No content") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "No internet and no weather with such coordinates exists"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
                     }
 
                     Spacer(modifier = Modifier.height(64.dp))
@@ -679,6 +696,7 @@ fun PortraitLayout(
                         // Set button
                         Button(
                             onClick = {
+                                //vm.updateState(false)
                                 try {
                                     onEvent(
                                         WeatherEvent.SetCoordinates(

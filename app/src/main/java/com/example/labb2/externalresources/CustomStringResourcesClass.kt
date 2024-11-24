@@ -23,7 +23,6 @@ class CustomStringResourcesClass {
                 .toString().replace("T"," ")
         }
 
-        //TODO: replace first and second with something else?
         fun replaceCoordinate(baseURL:String, longitude:Float, latitude:Float) =
             baseURL
                 .replace("{first}","$longitude")

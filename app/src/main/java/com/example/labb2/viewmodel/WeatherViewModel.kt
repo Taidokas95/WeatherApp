@@ -54,12 +54,12 @@ class WeatherViewModel2(private val dao: WeatherDao) : WeatherViewModelInterface
         get() = _currentListOfWeathers.asStateFlow()
 
     private val _currentTime =
-        MutableStateFlow(System.currentTimeMillis())     // The current time to prevent multiple calls in a short time
+        MutableStateFlow(-1L)     // The current time to prevent multiple calls in a short time
     override val currentTime: StateFlow<Long>
         get() = _currentTime
 
     private val _isUpdated =
-        MutableStateFlow(true)                      // Variable for updating composable list
+        MutableStateFlow(false)                      // Variable for updating composable list
     override val isUpdated: StateFlow<Boolean>
         get() = _isUpdated.asStateFlow()
 
@@ -80,7 +80,13 @@ class WeatherViewModel2(private val dao: WeatherDao) : WeatherViewModelInterface
      *
      */
     override fun updateTime(): Boolean {
-        if (System.currentTimeMillis() >= (_currentTime.value + 5000L)) {
+
+        if(_currentTime.value == -1L){
+            _currentTime.value = System.currentTimeMillis()
+            return true
+        }
+
+        else if (System.currentTimeMillis() >= (_currentTime.value + 5000L )) {
             _currentTime.value = System.currentTimeMillis()
             return true
         }
@@ -173,7 +179,7 @@ class WeatherViewModel2(private val dao: WeatherDao) : WeatherViewModelInterface
                     //println(x)
                     val y = WeathersConverter().stringToWeather(x.weathers)
 
-                    //TODO: Important for setting current value
+                    // Important for setting current value
                     _currentListOfWeathers.value = y
 
                     // When your task is complete and you want to update the UI or perform other tasks on the main thread, use Dispatchers.Main
@@ -191,6 +197,8 @@ class WeatherViewModel2(private val dao: WeatherDao) : WeatherViewModelInterface
 
             // Set new coordinates
             is WeatherEvent.SetCoordinates -> {
+                updateState(false)
+                _currentListOfWeathers.value.weathers.clear()
                 _currentListOfWeathers.value.latitude = event.latitude
                 _currentListOfWeathers.value.longitude = event.longitude
 
@@ -203,6 +211,7 @@ class WeatherViewModel2(private val dao: WeatherDao) : WeatherViewModelInterface
                             val backgroundJob = GlobalScope.launch(Dispatchers.Default) {
                                 val x = event.commands2.invoke(_currentListOfWeathers.value)
                                 withContext(Dispatchers.Main) {
+                                    //updateState(true)
                                     // Either insert or update the database if a successful network service has occurred
                                     if (x.first) {
                                         dao.upsertWeather(
@@ -240,6 +249,7 @@ class WeatherViewModel2(private val dao: WeatherDao) : WeatherViewModelInterface
                                 )
                                 val y = WeathersConverter().stringToWeather(x.weathers)
                                 _currentListOfWeathers.value = y
+                                updateState(true)
                             } catch (e: NullPointerException) {
                                 updateRetrofitMessage(false, "No content")
                             }

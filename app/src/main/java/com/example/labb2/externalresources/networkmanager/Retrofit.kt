@@ -11,7 +11,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-//TODO: Remove later
 const val link1 = "https://maceo.sth.kth.se/weather/forecast?lonLat=lon/14.333/lat/60.383"
 const val link2 =
     "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/16/lat/58/data.json"
@@ -93,7 +92,7 @@ private fun runSMHIService(localWeathersState: WeathersState) {
                     if (parameters.name == "t") temperature = parameters.values[0]
                     else if (parameters.name == "Wsymb2") icon = parameters.values[0].toString()
                 }
-                println(icon)
+                //println(icon)
 
                 // Add a new weather state to the WeathersState class
                 localWeathersState.weathers.add(
@@ -124,7 +123,7 @@ private fun runMaceoService(localWeathersState: WeathersState) {
         val post = response.body()
 
         if (post != null) {
-            println(post.approvedTime)
+            //println(post.approvedTime)
             localWeathersState.approvedTime = post.approvedTime
 
             for (timeSeries in post.timeSeries) {
