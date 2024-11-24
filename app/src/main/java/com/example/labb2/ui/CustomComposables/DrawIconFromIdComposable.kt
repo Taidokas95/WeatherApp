@@ -2,6 +2,15 @@ package com.example.labb2.ui.CustomComposables
 
 import com.example.labb2.R
 
+/**
+ *
+ * A class which returns a painter resource id based on the weatherType icon id.
+ *
+ * @param weatherType, The weatherType icon used to return a icon id
+ *
+ * @return Returns a drawable id which represents the weatherType icon id.
+ *
+ */
 fun DrawIconFromIdComposable(weatherType:String):Int {
     println("Current id = $weatherType")
     when (weatherType) {

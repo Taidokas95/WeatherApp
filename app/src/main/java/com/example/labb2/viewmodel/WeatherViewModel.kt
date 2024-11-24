@@ -13,6 +13,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+
+/**
+ *
+ * Interface class for representing the view model
+ *
+ */
 interface WeatherViewModelInterface {
 
     val latitude: StateFlow<Float>
@@ -24,6 +30,14 @@ interface WeatherViewModelInterface {
     fun onEvent(event: WeatherEvent)
 }
 
+
+/**
+ *
+ * The weather view model
+ *
+ * @param dao: The data access object used for working with the room database
+ *
+ */
 class WeatherViewModel(private val dao: WeatherDao) : WeatherViewModelInterface, ViewModel() {
 
     private val _latitude = MutableStateFlow(-1f)
@@ -36,16 +50,40 @@ class WeatherViewModel(private val dao: WeatherDao) : WeatherViewModelInterface,
     override val currentListOfWeathers: StateFlow<WeathersState>
         get() = _currentListOfWeathers
 
+    /**
+     *
+     * Set the longitude
+     *
+     * @param float, The longitude value
+     *
+     * */
     override fun setLongitude(float: Float) {
         _longitude.value = float
     }
 
+    /**
+     *
+     * Set the latitude
+     *
+     * @param float, The latitude value
+     *
+     */
     override fun setLatitude(float: Float) {
         _latitude.value = float
     }
 
 
     companion object {
+
+        /**
+         *
+         * Create the view model with a dao
+         *
+         * @param dao, the data access object used for creating the view model
+         *
+         * @return Returns a created viewmodel
+         *
+         */
         fun Factory(dao: WeatherDao): ViewModelProvider.Factory {
             return viewModelFactory {
                 initializer {
@@ -56,6 +94,13 @@ class WeatherViewModel(private val dao: WeatherDao) : WeatherViewModelInterface,
     }
 
 
+    /**
+     *
+     * A class for representing different weather event commands
+     *
+     * @param event, The weather event used
+     *
+     */
     override fun onEvent(event: WeatherEvent) {
         when (event) {
             is WeatherEvent.SaveWeather -> {

@@ -63,20 +63,47 @@ import kotlinx.coroutines.launch
 
 data class WeatherInfo(val date: String, val time: String, val type: String, val degrees: String)
 
+
+/**
+ *
+ * The main screen which is the entry point for the application
+ *
+ * @param onEvent, An interface used for calling specific commands
+ *
+ * @param vm, The viewModel used for the Main screen
+ *
+ * @param commands, A command for checking if there is an internet connection or not
+ *
+ * @param commands2, A command for running a runnable network service
+ *
+ */
 @Composable
 fun MainScreen(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
     commands2: (WeathersState) -> Pair<Boolean,String>
 ) {
-    val orientation = LocalConfiguration.current.orientation
+    val orientation = LocalConfiguration.current.orientation    // The current orientation
 
+    // Check the current orientation
     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
         LandscapeLayout(onEvent, vm, commands, commands2)
     } else {
         PortraitLayout(onEvent, vm, commands, commands2)
     }
 }
-
+/**
+ *
+ * The LandscapeLayout, which is used to represent the app in a Landscape view
+ *
+ * @param onEvent, An interface used for calling specific commands
+ *
+ * @param vm, The viewModel used for the Main screen
+ *
+ * @param commands, A command for checking if there is an internet connection or not
+ *
+ * @param commands2, A command for running a runnable network service
+ *
+ */
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun LandscapeLayout(
@@ -84,10 +111,10 @@ fun LandscapeLayout(
     commands2: (WeathersState) -> Pair<Boolean,String>
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
-    var lon by remember { mutableStateOf("14.333") }
-    var lat by remember { mutableStateOf("60.383") }
+    var lon by remember { mutableStateOf("") }    // Longitude state
+    var lat by remember { mutableStateOf("") }    // Latitude state
     //val weatherLists = vm.currentListOfWeathers.collectAsState()
-    val weatherLists by vm.currentListOfWeathers.collectAsState()
+    val weatherLists by vm.currentListOfWeathers.collectAsState()   // The current loaded in weather report list
 
     val scope = rememberCoroutineScope()
 
@@ -97,9 +124,9 @@ fun LandscapeLayout(
     var temperature = 1f
     var icon = R.drawable.sun*/
 
-    val isUpdated by vm.isUpdated.collectAsState()
+    val isUpdated by vm.isUpdated.collectAsState()  // A variable for updating how often the set button can be pressed
 
-    val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()
+    val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()        // A variable for representing specific messages
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -150,6 +177,8 @@ fun LandscapeLayout(
                         )
 
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    // Present message when the specified coordinates are out of bounds
                     if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
                     scope.launch {
                         snackBarHostState.showSnackbar(
@@ -159,6 +188,15 @@ fun LandscapeLayout(
                     vm.updateRetrofitMessage(true,"Success")
                 }
 
+                        else if(!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast"){
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Too fast"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true,"Success")
+                    }
+                    // Present message when there is no internet connection
                     else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No internet"){
                         scope.launch {
                             snackBarHostState.showSnackbar(
@@ -168,6 +206,7 @@ fun LandscapeLayout(
                         vm.updateRetrofitMessage(true,"Success")
                     }
 
+                    // Present message when there is no weather report of a specified coordinate while there is no internet connection
                     else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No content"){
                         scope.launch {
                             snackBarHostState.showSnackbar(
@@ -177,6 +216,7 @@ fun LandscapeLayout(
                         vm.updateRetrofitMessage(true,"Success")
                     }
 
+                    // Present the current weather report as a scrollable list
                     else if(weatherLists.weathers.size > 0 || isUpdated) {
                         LazyColumn(
                             userScrollEnabled = true,
@@ -289,7 +329,6 @@ fun LandscapeLayout(
                             })
                         }
                     }
-                    // TODO: END MARKER HERE
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -302,6 +341,7 @@ fun LandscapeLayout(
                                 modifier = Modifier.height(64.dp).weight(1f)
                             )
                             {
+                                // Longitude text field
                                 TextField(
                                     value = lon,
                                     onValueChange = { lon = it },
@@ -324,6 +364,7 @@ fun LandscapeLayout(
                                 modifier = Modifier.height(64.dp).weight(1f)
                             )
                             {
+                                // Latitude text field
                                 TextField(
                                     value = lat,
                                     onValueChange = { lon = it },
@@ -360,13 +401,16 @@ fun LandscapeLayout(
 
                             Spacer(modifier = Modifier.width(64.dp))
 
+                            // The set button
                             Button(
                                 onClick = {
                                     try{
                                         onEvent(
                                             WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2)
                                         )
-                                    } catch (e:NumberFormatException){
+                                    }
+                                    // Handles wrong input
+                                    catch (e:NumberFormatException){
                                         scope.launch {
                                             snackBarHostState.showSnackbar(
                                                 message = "Input not float"
@@ -388,16 +432,30 @@ fun LandscapeLayout(
     }
 }
 
+
+/**
+ *
+ * The PortraitLayout, which is used to represent the app in a Portrait view
+ *
+ * @param onEvent, An interface used for calling specific commands
+ *
+ * @param vm, The viewModel used for the Main screen
+ *
+ * @param commands, A command for checking if there is an internet connection or not
+ *
+ * @param commands2, A command for running a runnable network service
+ *
+ */
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun PortraitLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
     commands2: (WeathersState) -> Pair<Boolean,String>
 ) {
-    val weatherLists by vm.currentListOfWeathers.collectAsState()
+    val weatherLists by vm.currentListOfWeathers.collectAsState()   // The current weather report
     val snackBarHostState = remember { SnackbarHostState() }
-    var lon by remember { mutableStateOf("") }
-    var lat by remember { mutableStateOf("") }
+    var lon by remember { mutableStateOf("") }                // Latitude state
+    var lat by remember { mutableStateOf("") }                // Longitude state
 
     val scope = rememberCoroutineScope()
 
@@ -407,9 +465,9 @@ fun PortraitLayout(
     var temperature = 1f
     var icon = R.drawable.sun*/
 
-    val isUpdated by vm.isUpdated.collectAsState()
+    val isUpdated by vm.isUpdated.collectAsState()                  // Variable for keeping track of time when pressing the set button
 
-    val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()
+    val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()    // Variable for working with messages
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -446,6 +504,7 @@ fun PortraitLayout(
                         )
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    // When the coordinates are out of bounds
                     if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
                     scope.launch {
                         snackBarHostState.showSnackbar(
@@ -455,6 +514,16 @@ fun PortraitLayout(
                     vm.updateRetrofitMessage(true,"Success")
                 }
 
+                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast"){
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Too fast"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true,"Success")
+                    }
+
+                    // When there is no internet connection
                     else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No internet"){
                         scope.launch {
                             snackBarHostState.showSnackbar(
@@ -464,6 +533,7 @@ fun PortraitLayout(
                         vm.updateRetrofitMessage(true,"Success")
                     }
 
+                    // When there is no internet connecton while
                     else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No content"){
                         scope.launch {
                             snackBarHostState.showSnackbar(
@@ -474,6 +544,7 @@ fun PortraitLayout(
                     }
 
 
+                    // Present weather report
                     else if(weatherLists.weathers.size > 0 || isUpdated){
                         LazyColumn(
                             modifier = Modifier
@@ -593,6 +664,8 @@ fun PortraitLayout(
 
                     Spacer(modifier = Modifier.height(64.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
+
+                        // Longitude text field
                         TextField(
                             value = lon,
                             onValueChange = { lon = it },
@@ -622,6 +695,8 @@ fun PortraitLayout(
                                 .padding(8.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
+
+                        // Latitude text field
                         TextField(
                             value = lat,
                             onValueChange = { lat = it },
@@ -671,12 +746,15 @@ fun PortraitLayout(
                                 color = Color.Black
                             )
                         }*/
+                        // Set button
                         Button(
                             onClick = {
                                 //onEvent(WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2))
                                 try{
                                     onEvent(WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2))
-                                } catch (e:NumberFormatException){
+                                }
+                                // Handle wrong input
+                                catch (e:NumberFormatException){
                                     scope.launch {
                                         snackBarHostState.showSnackbar(
                                             message = "Input not float"
