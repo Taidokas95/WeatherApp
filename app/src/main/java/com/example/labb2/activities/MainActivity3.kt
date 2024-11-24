@@ -24,31 +24,26 @@ import com.example.labb2.ui.screens.MainScreen
 import com.example.labb2.ui.theme.LabB2Theme
 import com.example.labb2.viewmodel.WeatherViewModel2
 
+
+/**
+ *
+ * An activity which represents the weather report application
+ *
+ */
 class MainActivity3 : ComponentActivity() {
 
+    // Defines a weather database
     private val db by lazy{
         Room.databaseBuilder(
             applicationContext,
-            //ContactDatabase::class.java,
             WeatherDatabase::class.java,
             "weathers.db"
-            //"contacts.db"
         )
-            //.addTypeConverter(WeathersConverter())
             .build()
     }
 
+    // A network manager instance
     private val networkManager = NetworkManager.createNetworkManager()
-
-    /*private val viewModel by viewModels<WeatherViewModel>(//viewModels<ContactViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory{
-                override fun <T : ViewModel> create(modelClass: Class<T>):T{
-                    return WeatherViewModel(db.dao) as T
-                }
-            }
-        }
-    )*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +55,14 @@ class MainActivity3 : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    // Instantiate the viewmodel
+                    // Instantiate the viewmodel with a specific database dao
                     val weatherViewModel: WeatherViewModel2 = viewModel(
-                        factory = WeatherViewModel2.Factory(db.dao)//GameVM.Factory
+                        factory = WeatherViewModel2.Factory(db.dao)
                     )
 
-                    val x = {networkManager.isOnline(application)}
+                    val x = {networkManager.isOnline(application)}  // Command for representing a Network manager function
+
+                    // A command for representing a runnable network service
                     val y = {
                         weathersState: WeathersState
                         -> networkManager
@@ -76,39 +73,13 @@ class MainActivity3 : ComponentActivity() {
 
                     var z = listOf<Any>(x,y)
 
-                    // Instantiate the homescreen with a text to speach class (MyTTS) with the ComponentActivity Context
+                    // Instantiate the MainScreen with a viewmodel, an onEvent interface and a two commands
                     //HomeScreen(vm = gameViewModel,MyTTS(this))
                     MainScreen(
                         vm = weatherViewModel,
                         onEvent = weatherViewModel::onEvent,
                         commands = z[0] as () -> Boolean, commands2 = z[1] as (WeathersState) -> Pair<Boolean,String>
                     )
-
-                    /*val config = resources.configuration
-
-                    if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        GreetingLandscape()
-                    }
-                    else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        GreetingPortrait()
-                    }
-
-                    else{
-                        Greeting("Android")
-                    }*/
-
-
-
-
-                    //val test = Test(application = application)
-
-                    //test.threadTest()
-                    //test.netDownloadTest()
-                    //                  test.JSONparsingTest()
-                    //test.Persitant()
-                    //test.isNetworkAvailable()
-                    //ContactScreen(state = state, onEvent = viewModel::onEvent)
-
 
                 }
             }

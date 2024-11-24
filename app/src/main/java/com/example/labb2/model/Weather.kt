@@ -1,11 +1,16 @@
 package com.example.labb2.model
 
 import androidx.room.Entity
-import com.google.gson.Gson
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import com.example.labb2.externalresources.gsonmanager.gsonManager
+import com.example.labb2.externalresources.gsonmanager.GsonManager
 
+
+/**
+ *
+ * Defines a entity class which is used to work with the weather database
+ *
+ */
 @Entity(primaryKeys = ["latitude", "longitude"])
 data class Weather(
     @TypeConverters(WeathersConverter::class) val weathers: String,
@@ -14,22 +19,22 @@ data class Weather(
     val longitude:String
 )
 
+
+/**
+ *
+ * A class which represents different converters used for the data base to convert between different data types when storing data
+ *
+ */
 class WeathersConverter{
 
 	@TypeConverter
     fun weathersToString(weathersState: WeathersState):String{
-        //val gson = gsonManager.getGsonManager()
-        //val gson = Gson()
-        //val x = WeathersState::class.java
-        //return gson.toJson(weathersState, WeathersState::class.java)
-        return gsonManager.getGsonManager().toJson(weathersState)
+        return GsonManager.getGsonManager().toJson(weathersState)
     }
 
 	@TypeConverter
     fun stringToWeather(weathersState: String): WeathersState {
-        //val gson = Gson()
-        //return gson.fromJson(weathersState, WeathersState::class.java)
-        return gsonManager.getGsonManager().fromJson(weathersState)
+        return GsonManager.getGsonManager().fromJson(weathersState)
     }
 
 

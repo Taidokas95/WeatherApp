@@ -2,6 +2,7 @@ package com.example.labb2.ui.screens
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -231,13 +232,20 @@ fun LandscapeLayout(
                                             .wrapContentSize(Alignment.Center)
                                             .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                     ) {
-                                        Icon(
+                                        Image(
                                             painter = painterResource(
-                                                id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)//id = icon
+                                                id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)
                                             ),
                                             contentDescription = "weather type",
-                                            modifier = Modifier.size(32.dp, 32.dp)
+                                            modifier = Modifier.size(32.dp,32.dp)
                                         )
+                                        //Icon(
+                                        //    painter = painterResource(
+                                        //        id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)//id = icon
+                                        //    ),
+                                        //    contentDescription = "weather type",
+                                        //    modifier = Modifier.size(32.dp, 32.dp)
+                                        //)
                                     }
                                     Box(
                                         modifier = Modifier.height(32.dp).weight(1f)
@@ -520,14 +528,21 @@ fun PortraitLayout(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    Icon(
+                                    Image(
                                         painter = painterResource(
                                             id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)
-                                            //weatherLists.weathers[index].weatherIcon.toInt()//icon
                                         ),
                                         contentDescription = "weather type",
-                                        modifier = Modifier.size(32.dp, 32.dp)
+                                        modifier = Modifier.size(32.dp,32.dp)
                                     )
+                                    //Icon(
+                                    //    painter = painterResource(
+                                    //        id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)
+                                    //        //weatherLists.weathers[index].weatherIcon.toInt()//icon
+                                    //    ),
+                                    //    contentDescription = "weather type",
+                                    //    modifier = Modifier.size(32.dp, 32.dp)
+                                    //)
                                 }
                                 Column(
                                     modifier = Modifier

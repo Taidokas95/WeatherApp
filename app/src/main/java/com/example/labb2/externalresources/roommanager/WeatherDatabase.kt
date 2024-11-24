@@ -6,7 +6,6 @@ import androidx.room.TypeConverters
 import com.example.labb2.model.Weather
 import com.example.labb2.model.WeathersConverter
 
-//import com.example.labb2.model.secondversion.databasemymanager.interfaces.WeatherDao
 
 @Database(
     entities = [Weather::class],
