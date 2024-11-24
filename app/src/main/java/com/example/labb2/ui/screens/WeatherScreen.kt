@@ -63,7 +63,6 @@ import kotlinx.coroutines.launch
 
 data class WeatherInfo(val date: String, val time: String, val type: String, val degrees: String)
 
-
 /**
  *
  * The main screen which is the entry point for the application
@@ -80,7 +79,7 @@ data class WeatherInfo(val date: String, val time: String, val type: String, val
 @Composable
 fun MainScreen(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Pair<Boolean,String>
+    commands2: (WeathersState) -> Pair<Boolean, String>
 ) {
     val orientation = LocalConfiguration.current.orientation    // The current orientation
 
@@ -91,6 +90,7 @@ fun MainScreen(
         PortraitLayout(onEvent, vm, commands, commands2)
     }
 }
+
 /**
  *
  * The LandscapeLayout, which is used to represent the app in a Landscape view
@@ -108,25 +108,15 @@ fun MainScreen(
 @Composable
 fun LandscapeLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Pair<Boolean,String>
+    commands2: (WeathersState) -> Pair<Boolean, String>
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("") }    // Longitude state
     var lat by remember { mutableStateOf("") }    // Latitude state
-    //val weatherLists = vm.currentListOfWeathers.collectAsState()
     val weatherLists by vm.currentListOfWeathers.collectAsState()   // The current loaded in weather report list
-
     val scope = rememberCoroutineScope()
-
-    /*var weatherType = "type"
-    var date = "date"
-    var time = "time"
-    var temperature = 1f
-    var icon = R.drawable.sun*/
-
     val isUpdated by vm.isUpdated.collectAsState()  // A variable for updating how often the set button can be pressed
-
-    val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()        // A variable for representing specific messages
+    val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()    // A variable for representing specific messages
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
@@ -169,7 +159,7 @@ fun LandscapeLayout(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    if(weatherLists.approvedTime!= "")
+                    if (weatherLists.approvedTime != "")
                         Text(
                             text = CustomStringResourcesClass.parseDateToString(weatherLists.approvedTime),
                             fontSize = 20.sp,
@@ -179,88 +169,54 @@ fun LandscapeLayout(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Present message when the specified coordinates are out of bounds
-                    if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
-                    scope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = "Requested point is out of bounds"
-                        )
-                    }
-                    vm.updateRetrofitMessage(true,"Success")
-                }
-
-                        else if(!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast"){
+                    if (!theRetrofitMessage.first && theRetrofitMessage.second == "404") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Requested point is out of bounds"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
+                    } else if (!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast") {
                         scope.launch {
                             snackBarHostState.showSnackbar(
                                 message = "Too fast"
                             )
                         }
-                        vm.updateRetrofitMessage(true,"Success")
+                        vm.updateRetrofitMessage(true, "Success")
                     }
                     // Present message when there is no internet connection
-                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No internet"){
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No internet") {
                         scope.launch {
                             snackBarHostState.showSnackbar(
                                 message = "No internet connection"
                             )
                         }
-                        vm.updateRetrofitMessage(true,"Success")
+                        vm.updateRetrofitMessage(true, "Success")
                     }
 
                     // Present message when there is no weather report of a specified coordinate while there is no internet connection
-                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No content"){
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No content") {
                         scope.launch {
                             snackBarHostState.showSnackbar(
                                 message = "No internet and no weather with such coordinates exists"
                             )
                         }
-                        vm.updateRetrofitMessage(true,"Success")
+                        vm.updateRetrofitMessage(true, "Success")
                     }
 
                     // Present the current weather report as a scrollable list
-                    else if(weatherLists.weathers.size > 0 || isUpdated) {
+                    else if (weatherLists.weathers.size > 0 || isUpdated) {
                         LazyColumn(
                             userScrollEnabled = true,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp),
-                            state =rememberLazyListState()
+                            state = rememberLazyListState()
                         ) {
 
                             vm.updateState(false)
 
                             items(weatherLists.weathers.size, itemContent = { index ->
-                                //var weatherType: String
-                                //var date = ""
-                                //var time = ""
-                                //var temperature = -1f
-                                //var icon = R.drawable.sun
-
-                                LaunchedEffect(weatherLists) {
-                                    /*weatherType = weatherLists.weathers[index].weatherIcon
-                                    date = weatherLists.weathers[index].weatherDate
-                                    time = weatherLists.approvedTime
-                                    temperature = weatherLists.weathers[index].temperature*/
-
-                                    /*when (weatherType) {
-                                        "1" -> icon = R.drawable.sun //clear skies
-                                        "2" -> icon = R.drawable.cloud //partly cloudy
-                                        "3" -> icon = R.drawable.cloud //cloudy
-                                        "4" -> icon = R.drawable.overcast //overcast
-                                        "5" -> icon = R.drawable.fog //fog
-                                        "6" -> icon = R.drawable.rain //rain showers
-                                        "7" -> icon = R.drawable.snow //snow showers
-                                        "8" -> icon = R.drawable.thunder
-                                        "9" -> icon = R.drawable.rain //rain
-                                        "10" -> icon = R.drawable.snow //snow
-                                        "11" -> icon = R.drawable.rain//freezing rain
-                                        "12" -> icon = R.drawable.rain //drizzle
-                                        "13" -> icon = R.drawable.rain//freezing drizzle
-                                        "14" -> icon = R.drawable.thunder //thunder with rain
-                                        "15" -> icon = R.drawable.thunder //thunder with snow
-                                        else -> icon = R.drawable.sun
-                                    }*/
-                                }
-
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -277,40 +233,28 @@ fun LandscapeLayout(
                                                 id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)
                                             ),
                                             contentDescription = "weather type",
-                                            modifier = Modifier.size(32.dp,32.dp)
+                                            modifier = Modifier.size(32.dp, 32.dp)
                                         )
-                                        //Icon(
-                                        //    painter = painterResource(
-                                        //        id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)//id = icon
-                                        //    ),
-                                        //    contentDescription = "weather type",
-                                        //    modifier = Modifier.size(32.dp, 32.dp)
-                                        //)
                                     }
                                     Box(
-                                        modifier = Modifier.height(32.dp).weight(1f)
+                                        modifier = Modifier
+                                            .height(32.dp)
+                                            .weight(1f)
                                             .wrapContentSize(Alignment.Center)
                                             .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                     ) {
                                         Text(
-                                            text = CustomStringResourcesClass.parseDateToString(weatherLists.weathers[index].weatherDate),//date,
+                                            text = CustomStringResourcesClass.parseDateToString(
+                                                weatherLists.weathers[index].weatherDate
+                                            ),//date,
                                             fontSize = 20.sp,
                                             fontWeight = FontWeight.Medium
                                         )
                                     }
-                                    /*Box(
-                                        modifier = Modifier.height(32.dp).weight(1f)
-                                            .wrapContentSize(Alignment.Center)
-                                            .padding(0.dp, 2.dp, 0.dp, 2.dp)
-                                    ) {
-                                        Text(
-                                            text = weatherLists.approvedTime,//time,
-                                            fontSize = 20.sp,
-                                            fontWeight = FontWeight.Medium
-                                        )
-                                    }*/
                                     Box(
-                                        modifier = Modifier.height(32.dp).weight(1f)
+                                        modifier = Modifier
+                                            .height(32.dp)
+                                            .weight(1f)
                                             .wrapContentSize(Alignment.Center)
                                             .padding(0.dp, 2.dp, 0.dp, 2.dp)
                                     ) {
@@ -318,7 +262,6 @@ fun LandscapeLayout(
                                             text = stringResource(
                                                 R.string.Celsius,
                                                 weatherLists.weathers[index].temperature
-                                                //temperature
                                             ),
                                             fontSize = 20.sp,
                                             fontWeight = FontWeight.Medium
@@ -338,17 +281,30 @@ fun LandscapeLayout(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Box(
-                                modifier = Modifier.height(70.dp).weight(1f)
+                                modifier = Modifier
+                                    .height(70.dp)
+                                    .weight(1f)
                             )
                             {
                                 // Longitude text field
                                 TextField(
                                     value = lon,
                                     onValueChange = { lon = it },
-                                    label = { Text(text = stringResource(R.string.Longitude), style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium)) },
+                                    label = {
+                                        Text(
+                                            text = stringResource(R.string.Longitude),
+                                            style = TextStyle(
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        )
+                                    },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     maxLines = 1,
-                                    textStyle = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold),
+                                    textStyle = TextStyle(
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold
+                                    ),
                                     colors = TextFieldDefaults.colors(
                                         focusedContainerColor = Color.White,
                                         unfocusedContainerColor = Color.White,
@@ -361,7 +317,9 @@ fun LandscapeLayout(
                                 )
                             }
                             Box(
-                                modifier = Modifier.height(70.dp).weight(1f)
+                                modifier = Modifier
+                                    .height(70.dp)
+                                    .weight(1f)
                             )
                             {
                                 // Latitude text field
@@ -369,18 +327,29 @@ fun LandscapeLayout(
                                     value = lat,
                                     onValueChange = { lat = it },
                                     label = {
-                                        Text(text = stringResource(R.string.Latitude), style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium))
+                                        Text(
+                                            text = stringResource(R.string.Latitude),
+                                            style = TextStyle(
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        )
                                     },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     maxLines = 1,
-                                    textStyle = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold),
+                                    textStyle = TextStyle(
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold
+                                    ),
                                     colors = TextFieldDefaults.colors(
                                         focusedContainerColor = Color.White,
                                         unfocusedContainerColor = Color.White,
                                         focusedLabelColor = Color.DarkGray,
                                         unfocusedLabelColor = Color.DarkGray
                                     ),
-                                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
                                 )
                             }
                         }
@@ -404,13 +373,18 @@ fun LandscapeLayout(
                             // The set button
                             Button(
                                 onClick = {
-                                    try{
+                                    try {
                                         onEvent(
-                                            WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2)
+                                            WeatherEvent.SetCoordinates(
+                                                lat.toFloat(),
+                                                lon.toFloat(),
+                                                commands,
+                                                commands2
+                                            )
                                         )
                                     }
                                     // Handles wrong input
-                                    catch (e:NumberFormatException){
+                                    catch (e: NumberFormatException) {
                                         scope.launch {
                                             snackBarHostState.showSnackbar(
                                                 message = "Input not float"
@@ -419,10 +393,16 @@ fun LandscapeLayout(
                                     }
 
                                 },
-                                modifier = Modifier.size(100.dp, 60.dp).border(2.dp, Color.Black, RoundedCornerShape(32.dp)),
+                                modifier = Modifier
+                                    .size(100.dp, 60.dp)
+                                    .border(2.dp, Color.Black, RoundedCornerShape(32.dp)),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                             ) {
-                                Text(text = stringResource(R.string.Set), fontSize = 20.sp, color = Color.Black)
+                                Text(
+                                    text = stringResource(R.string.Set),
+                                    fontSize = 20.sp,
+                                    color = Color.Black
+                                )
                             }
                         }
                     }
@@ -450,28 +430,21 @@ fun LandscapeLayout(
 @Composable
 fun PortraitLayout(
     onEvent: (WeatherEvent) -> Unit, vm: WeatherViewModel2, commands: () -> Boolean,
-    commands2: (WeathersState) -> Pair<Boolean,String>
+    commands2: (WeathersState) -> Pair<Boolean, String>
 ) {
     val weatherLists by vm.currentListOfWeathers.collectAsState()   // The current weather report
     val snackBarHostState = remember { SnackbarHostState() }
     var lon by remember { mutableStateOf("") }                // Latitude state
     var lat by remember { mutableStateOf("") }                // Longitude state
-
     val scope = rememberCoroutineScope()
-
-    /*var weatherType = "type"
-    var date = "date"
-    var time = "time"
-    var temperature = 1f
-    var icon = R.drawable.sun*/
-
     val isUpdated by vm.isUpdated.collectAsState()                  // Variable for keeping track of time when pressing the set button
-
     val theRetrofitMessage by vm.theRetrofitMessage.collectAsState()    // Variable for working with messages
 
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         Box(
-            modifier = Modifier.fillMaxSize().background(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
                     brush = Brush.linearGradient(
                         colors = listOf(Color.White, Color(100, 172, 255)),
                         start = Offset(400f, 50f),
@@ -492,11 +465,18 @@ fun PortraitLayout(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(modifier = Modifier.height(56.dp))
-                    Text(text = stringResource(R.string.weather_forecast), fontSize = 32.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        text = stringResource(R.string.weather_forecast),
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Medium
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = stringResource(R.string.location_lon_lat, lon, lat), fontSize = 24.sp)
+                    Text(
+                        text = stringResource(R.string.location_lon_lat, lon, lat),
+                        fontSize = 24.sp
+                    )
                     Spacer(modifier = Modifier.height(32.dp))
-                    if(weatherLists.approvedTime!= "")
+                    if (weatherLists.approvedTime != "")
                         Text(
                             text = CustomStringResourcesClass.parseDateToString(weatherLists.approvedTime),
                             fontSize = 20.sp,
@@ -505,159 +485,109 @@ fun PortraitLayout(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // When the coordinates are out of bounds
-                    if(!theRetrofitMessage.first && theRetrofitMessage.second == "404"){
-                    scope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = "Requested point is out of bounds"
-                        )
-                    }
-                    vm.updateRetrofitMessage(true,"Success")
-                }
-
-                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast"){
+                    if (!theRetrofitMessage.first && theRetrofitMessage.second == "404") {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Requested point is out of bounds"
+                            )
+                        }
+                        vm.updateRetrofitMessage(true, "Success")
+                    } else if (!theRetrofitMessage.first && theRetrofitMessage.second == "Too fast") {
                         scope.launch {
                             snackBarHostState.showSnackbar(
                                 message = "Too fast"
                             )
                         }
-                        vm.updateRetrofitMessage(true,"Success")
+                        vm.updateRetrofitMessage(true, "Success")
                     }
 
                     // When there is no internet connection
-                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No internet"){
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No internet") {
                         scope.launch {
                             snackBarHostState.showSnackbar(
                                 message = "No internet connection"
                             )
                         }
-                        vm.updateRetrofitMessage(true,"Success")
+                        vm.updateRetrofitMessage(true, "Success")
                     }
 
-                    // When there is no internet connecton while
-                    else if(!theRetrofitMessage.first && theRetrofitMessage.second == "No content"){
+                    // When there is no internet connection while
+                    else if (!theRetrofitMessage.first && theRetrofitMessage.second == "No content") {
                         scope.launch {
                             snackBarHostState.showSnackbar(
                                 message = "No internet and no weather with such coordinates exists"
                             )
                         }
-                        vm.updateRetrofitMessage(true,"Success")
+                        vm.updateRetrofitMessage(true, "Success")
                     }
 
-
                     // Present weather report
-                    else if(weatherLists.weathers.size > 0 || isUpdated){
+                    else if (weatherLists.weathers.size > 0 || isUpdated) {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(350.dp),
-                            state =rememberLazyListState()
+                            state = rememberLazyListState()
                         ) {
 
                             vm.updateState(false)
 
-                            items(weatherLists.weathers.size, itemContent = { index -> //weatherLists.weathers.size
-                                println("Size of weather report = ${weatherLists.weathers.size}")
-                            //var weatherType = "type"
-                            //var date = "date"
-                            //var time = "time"
-                            //var temperature = 1f
-                            //var icon = R.drawable.sun
-
-                                /*weatherType = weatherLists.weathers[index].weatherIcon
-                                date = weatherLists.weathers[index].weatherDate
-                                time = weatherLists.approvedTime
-                                temperature = weatherLists.weathers[index].temperature*/
-
-
-                                /*when (weatherType) {
-                                "1" -> icon = R.drawable.sun //clear skies
-                                "2" -> icon = R.drawable.cloud //partly cloudy
-                                "3" -> icon = R.drawable.cloud //cloudy
-                                "4" -> icon = R.drawable.overcast //overcast
-                                "5" -> icon = R.drawable.fog //fog
-                                "6" -> icon = R.drawable.rain //rain showers
-                                "7" -> icon = R.drawable.snow //snow showers
-                                "8" -> icon = R.drawable.thunder
-                                "9" -> icon = R.drawable.rain //rain
-                                "10" -> icon = R.drawable.snow //snow
-                                "11" -> icon = R.drawable.rain//freezing rain
-                                "12" -> icon = R.drawable.rain //drizzle
-                                "13" -> icon = R.drawable.rain//freezing drizzle
-                                "14" -> icon = R.drawable.thunder //thunder with rain
-                                "15" -> icon = R.drawable.thunder //thunder with snow
-                                else -> icon = R.drawable.sun
-                            }*/
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Image(
-                                        painter = painterResource(
-                                            id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)
-                                        ),
-                                        contentDescription = "weather type",
-                                        modifier = Modifier.size(32.dp,32.dp)
-                                    )
-                                    //Icon(
-                                    //    painter = painterResource(
-                                    //        id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)
-                                    //        //weatherLists.weathers[index].weatherIcon.toInt()//icon
-                                    //    ),
-                                    //    contentDescription = "weather type",
-                                    //    modifier = Modifier.size(32.dp, 32.dp)
-                                    //)
-                                }
-                                Column(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = CustomStringResourcesClass.parseDateToString(weatherLists.weathers[index].weatherDate),//date,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                                /*Column(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = weatherLists.approvedTime,//time,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }*/
-                                Column(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .aspectRatio(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = stringResource(
-                                            R.string.Celsius, weatherLists.weathers[index].temperature//temperature
-                                        ),
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-                            }
-                        })
+                            items(
+                                weatherLists.weathers.size,
+                                itemContent = { index ->
+                                    //println("Size of weather report = ${weatherLists.weathers.size}")
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly,
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .aspectRatio(1f),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Image(
+                                                painter = painterResource(
+                                                    id = DrawIconFromIdComposable(weatherLists.weathers[index].weatherIcon)
+                                                ),
+                                                contentDescription = "weather type",
+                                                modifier = Modifier.size(32.dp, 32.dp)
+                                            )
+                                        }
+                                        Column(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .aspectRatio(1f),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                text = CustomStringResourcesClass.parseDateToString(
+                                                    weatherLists.weathers[index].weatherDate
+                                                ),//date,
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        }
+                                        Column(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .aspectRatio(1f),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                text = stringResource(
+                                                    R.string.Celsius,
+                                                    weatherLists.weathers[index].temperature
+                                                ),
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        }
+                                    }
+                                })
 
                         }
                     }
@@ -749,12 +679,18 @@ fun PortraitLayout(
                         // Set button
                         Button(
                             onClick = {
-                                //onEvent(WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2))
-                                try{
-                                    onEvent(WeatherEvent.SetCoordinates(lat.toFloat(), lon.toFloat(), commands, commands2))
+                                try {
+                                    onEvent(
+                                        WeatherEvent.SetCoordinates(
+                                            lat.toFloat(),
+                                            lon.toFloat(),
+                                            commands,
+                                            commands2
+                                        )
+                                    )
                                 }
                                 // Handle wrong input
-                                catch (e:NumberFormatException){
+                                catch (e: NumberFormatException) {
                                     scope.launch {
                                         snackBarHostState.showSnackbar(
                                             message = "Input not float"

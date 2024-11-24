@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter
 class CustomStringResourcesClass {
     companion object{
 
-
         /**
          * Parses date
          *

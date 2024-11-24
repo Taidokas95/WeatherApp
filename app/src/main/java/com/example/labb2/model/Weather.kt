@@ -14,25 +14,24 @@ import com.example.labb2.externalresources.gsonmanager.GsonManager
 @Entity(primaryKeys = ["latitude", "longitude"])
 data class Weather(
     @TypeConverters(WeathersConverter::class) val weathers: String,
-    val approvedTime:String,
-    val latitude:String,
-    val longitude:String
+    val approvedTime: String,
+    val latitude: String,
+    val longitude: String
 )
-
 
 /**
  *
  * A class which represents different converters used for the data base to convert between different data types when storing data
  *
  */
-class WeathersConverter{
+class WeathersConverter {
 
-	@TypeConverter
-    fun weathersToString(weathersState: WeathersState):String{
+    @TypeConverter
+    fun weathersToString(weathersState: WeathersState): String {
         return GsonManager.getGsonManager().toJson(weathersState)
     }
 
-	@TypeConverter
+    @TypeConverter
     fun stringToWeather(weathersState: String): WeathersState {
         return GsonManager.getGsonManager().fromJson(weathersState)
     }

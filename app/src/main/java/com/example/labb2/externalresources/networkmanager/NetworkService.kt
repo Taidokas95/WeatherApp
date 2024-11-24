@@ -17,7 +17,6 @@ interface NetworkService {
 interface RunnableService{
     data class RetrofitRunner(
         val localWeathersState: WeathersState,
-        // TODO: Change between the type of service
         //val typeOfNetworkService: TypeOfNetworkService = TypeOfNetworkService.MACEOTESTJSON):RunnableService
         val typeOfNetworkService: TypeOfNetworkService = TypeOfNetworkService.GETEXTERNALJSON
     ): RunnableService

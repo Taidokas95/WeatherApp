@@ -53,8 +53,7 @@ interface WeatherDao {
      *
      */
     @Query("SELECT * FROM weather WHERE latitude =:latitude AND longitude =:longitude")
-    fun getWeathersFromCoordinates(latitude: String, longitude: String):Weather
-
+    fun getWeathersFromCoordinates(latitude: String, longitude: String): Weather
 
 
 }

@@ -16,6 +16,6 @@ import com.example.labb2.model.WeathersConverter
     version = 1
 )
 @TypeConverters(WeathersConverter::class)
-abstract class WeatherDatabase: RoomDatabase() {
-    abstract  val dao: WeatherDao
+abstract class WeatherDatabase : RoomDatabase() {
+    abstract val dao: WeatherDao
 }
